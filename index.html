@@ -105,6 +105,7 @@
       backdrop-filter: blur(6px);
       -webkit-backdrop-filter: blur(6px);
       white-space: nowrap;
+      font-size: 18px;
     }
     .janggunToast .dot{
       width:10px;height:10px;border-radius:99px;
@@ -117,8 +118,8 @@
     }
     @keyframes toastPop{
       0%{ opacity:0; transform: translateX(-50%) translateY(-16px) scale(.96); }
-      18%{ opacity:1; transform: translateX(-50%) translateY(0px) scale(1.02); }
-      55%{ opacity:1; transform: translateX(-50%) translateY(0px) scale(1.00); }
+      18%{ opacity:1; transform: translateX(-50%) translateY(0px) scale(1.05); }
+      55%{ opacity:1; transform: translateX(-50%) translateY(0px) scale(1.02); }
       100%{ opacity:0; transform: translateX(-50%) translateY(-10px) scale(.98); }
     }
 
@@ -382,9 +383,7 @@
   <div class="page">
     <div class="shell">
 
-      <!-- MAIN -->
       <div class="card frame" id="mainCard">
-        <!-- ✅ 장군 표시 -->
         <div class="janggunToast" id="janggunToast">
           <span class="dot"></span>
           <span id="janggunText">장군!</span>
@@ -433,7 +432,6 @@
         </div>
       </div>
 
-      <!-- SIDE -->
       <div class="card side">
         <h2>
           <span>플레이 정보</span>
@@ -469,7 +467,6 @@
     </div>
   </div>
 
-  <!-- HELP -->
   <div class="overlay show" id="helpOverlay">
     <div class="card modal">
       <h3>
@@ -489,7 +486,6 @@
     </div>
   </div>
 
-  <!-- RESULT -->
   <div class="overlay" id="resultOverlay">
     <div class="card modal">
       <h3 id="resultTitle">결과</h3>
@@ -503,9 +499,6 @@
 
 <script>
 (() => {
-  // -------------------------
-  // DOM
-  // -------------------------
   const cv = document.getElementById('cv');
   const ctx = cv.getContext('2d');
 
@@ -598,7 +591,6 @@
     osc.stop(t0 + 0.09);
   }
 
-  // ✅ 장군 소리 (짧은 경보 느낌)
   function playJanggun(){
     if(!audioCtx) return;
     const t0 = audioCtx.currentTime;
@@ -614,7 +606,6 @@
     f.frequency.setValueAtTime(1400, t0);
     f.Q.setValueAtTime(1.0, t0);
 
-    // 두 번 "삐-삐" 느낌
     const seq = [
       {start:0.00, dur:0.10, f1:540, f2:810},
       {start:0.14, dur:0.12, f1:620, f2:930},
@@ -663,6 +654,24 @@
   function pieceText(p){
     if(p.type === TYPE.G) return (p.side===SIDE.HAN) ? '漢' : '楚';
     return HANJA[p.type] || '?';
+  }
+
+  // ✅ 요청: 글자 크기 규칙
+  // - 장(漢/楚): 가장 큼
+  // - 사/졸(士/卒): 작게
+  // - 마/상/차(馬/象/車): 중간
+  // - 포(炮): 기본
+  function pieceFontSize(type){
+    if(type === TYPE.G) return 78;                // 가장 큼
+    if(type === TYPE.A || type === TYPE.S) return 58; // 작게
+    if(type === TYPE.H || type === TYPE.E || type === TYPE.R) return 64; // 중간
+    return 66;                                     // 기본(炮)
+  }
+  function chipFontSize(type){
+    if(type === TYPE.G) return 28;
+    if(type === TYPE.A || type === TYPE.S) return 20;
+    if(type === TYPE.H || type === TYPE.E || type === TYPE.R) return 23;
+    return 24;
   }
 
   // -------------------------
@@ -1025,7 +1034,7 @@
     return null;
   }
 
-  // ✅ 장군 체크 판정: side(수비측) 장이 상대에게 잡힐 수 있으면 true
+  // 장군 판정
   function findGeneral(b, side){
     for(let y=0;y<10;y++){
       for(let x=0;x<9;x++){
@@ -1043,24 +1052,21 @@
     return moves.some(m => m.tx===gpos.x && m.ty===gpos.y);
   }
 
-  // ✅ 장군 표시 + 소리
   let toastTimer = null;
   function showJanggun(attackerSide){
     if(gameOver) return;
     const who = (attackerSide===SIDE.HAN) ? "漢(플레이어)" : "楚(AI)";
     UI.janggunText.textContent = `${who} 장군!`;
-    UI.janggunToast.classList.remove('show'); // 재트리거용
+    UI.janggunToast.classList.remove('show');
     void UI.janggunToast.offsetWidth;
     UI.janggunToast.classList.add('show');
-
     playJanggun();
-
     if(toastTimer) clearTimeout(toastTimer);
     toastTimer = setTimeout(()=> UI.janggunToast.classList.remove('show'), 950);
   }
 
   // -------------------------
-  // AI (alpha-beta)
+  // AI
   // -------------------------
   function evaluate(b){
     let score=0;
@@ -1151,7 +1157,7 @@
   }
 
   // -------------------------
-  // Piece Images (SVG)
+  // Piece Images (SVG) - ✅ 폰트 크기 반영
   // -------------------------
   function getPieceImage(p){
     const key = `${p.side}_${p.type}`;
@@ -1162,6 +1168,9 @@
     const ring = isHan ? '#39d98a' : '#ff5d5d';
     const ring2 = isHan ? '#6ff2b7' : '#ff9a9a';
     const glow = isHan ? 'rgba(57,217,138,.35)' : 'rgba(255,93,93,.35)';
+
+    const fs = pieceFontSize(p.type); // ✅ 타입별 크기
+    const y = (p.type === TYPE.G) ? 108 : 104; // 장은 약간 아래로
 
     const svg = `
     <svg xmlns="http://www.w3.org/2000/svg" width="180" height="180">
@@ -1187,7 +1196,7 @@
         <circle cx="90" cy="88" r="62" fill="none" stroke="rgba(0,0,0,.12)" stroke-width="2"/>
         <circle cx="90" cy="88" r="66" fill="none" stroke="${ring2}" stroke-opacity=".45" stroke-width="2"/>
         <ellipse cx="74" cy="62" rx="46" ry="32" fill="url(#shine)" opacity=".95"/>
-        <text x="90" y="104" text-anchor="middle" font-size="66" font-weight="900"
+        <text x="90" y="${y}" text-anchor="middle" font-size="${fs}" font-weight="900"
           fill="${ring}" style="paint-order: stroke; stroke: rgba(0,0,0,.18); stroke-width: 2px;"
           font-family="ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace">${txt}</text>
       </g>
@@ -1206,6 +1215,9 @@
     const txt = pieceText(p);
     const isHan = p.side === SIDE.HAN;
     const ring = isHan ? '#39d98a' : '#ff5d5d';
+    const fs = chipFontSize(p.type); // ✅ 타입별 크기
+    const y = (p.type === TYPE.G) ? 39 : 37;
+
     const svg = `
     <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60">
       <defs>
@@ -1217,7 +1229,7 @@
       </defs>
       <circle cx="30" cy="31" r="23" fill="rgba(0,0,0,.18)"/>
       <circle cx="30" cy="30" r="23" fill="url(#s)" stroke="${ring}" stroke-width="3"/>
-      <text x="30" y="37" text-anchor="middle" font-size="24" font-weight="900" fill="${ring}"
+      <text x="30" y="${y}" text-anchor="middle" font-size="${fs}" font-weight="900" fill="${ring}"
         style="paint-order:stroke;stroke:rgba(0,0,0,.15);stroke-width:1px;"
         font-family="ui-monospace, monospace">${txt}</text>
     </svg>`.trim();
@@ -1331,7 +1343,6 @@
         return;
       }
 
-      // ✅ 장군 체크 알림 (상대 장이 위협받는지)
       const defender = (piece.side===SIDE.HAN) ? SIDE.CHO : SIDE.HAN;
       if(isInCheck(board, defender)){
         showJanggun(piece.side);
@@ -1577,7 +1588,7 @@
   // Input
   // -------------------------
   function handleTap(ev){
-    if(!isPlayersTurn()) return;
+    if(!(turn===SIDE.HAN && !gameOver && !thinking && !movingPiece)) return;
 
     const rect = cv.getBoundingClientRect();
     const scaleX = cv.width / rect.width;
@@ -1646,7 +1657,6 @@
   renderCaptured();
 
   requestAnimationFrame((t) => { lastTime=t; requestAnimationFrame(renderFrame); });
-
 })();
 </script>
 </body>
