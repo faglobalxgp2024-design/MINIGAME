@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover" />
   <title>XGP 장기 미니게임</title>
   <style>
     :root{
@@ -10,18 +10,8 @@
       --bg2:#ff6a3d;
       --bg3:#d93a2b;
 
-      --card:#ffb053;
-      --card2:#ff9b3f;
       --ink:#fff7ea;
-      --muted: rgba(255,247,234,.75);
-      --dark:#0b1020;
-
-      --stroke: rgba(255,244,224,.35);
-      --stroke2: rgba(15,10,10,.35);
-
-      --gold:#f4d35e;
-      --gold2:#ffcf6e;
-
+      --gold:#ffd073;
       --han:#39d98a;
       --cho:#ff5d5d;
 
@@ -29,7 +19,7 @@
     }
 
     *{ box-sizing:border-box; -webkit-tap-highlight-color: transparent; }
-    html,body{ height:100%; }
+    html,body{ height:100%; width:100%; }
     body{
       margin:0;
       font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
@@ -38,11 +28,10 @@
         radial-gradient(1200px 800px at 20% 10%, rgba(255,255,255,.16) 0%, rgba(255,255,255,0) 55%),
         radial-gradient(900px 600px at 80% 30%, rgba(255,255,255,.10) 0%, rgba(255,255,255,0) 55%),
         linear-gradient(90deg, var(--bg1), var(--bg2) 50%, var(--bg3));
-      overflow:hidden;
+      overflow-x:hidden;
       overscroll-behavior: none;
     }
 
-    /* 미세한 점무늬 */
     body:before{
       content:"";
       position:fixed;
@@ -55,23 +44,23 @@
     }
 
     .page{
-      height:100%;
+      min-height:100%;
+      width:100%;
       display:flex;
       align-items:flex-start;
       justify-content:center;
-      padding: 24px 14px;
+      padding: calc(18px + env(safe-area-inset-top)) 14px calc(18px + env(safe-area-inset-bottom)) 14px;
+      overflow-x:hidden;
     }
 
     .shell{
-      width:min(980px, 100%);
+      width: min(980px, 100%);
       display:grid;
       grid-template-columns: 1fr 280px;
       gap: 14px;
       align-items: start;
     }
-
     @media (max-width: 920px){
-      body{ overflow:auto; }
       .shell{ grid-template-columns: 1fr; }
     }
 
@@ -82,6 +71,7 @@
       box-shadow: var(--shadow);
       position: relative;
       overflow:hidden;
+      max-width:100%;
     }
 
     .frame{
@@ -89,21 +79,65 @@
       border: 2px solid rgba(70,20,10,.35);
       background: linear-gradient(180deg, rgba(0,0,0,.06), rgba(0,0,0,.10));
       padding: 12px;
+      max-width:100%;
+    }
+
+    /* ✅ 장군 토스트 */
+    .janggunToast{
+      position:absolute;
+      left:50%;
+      top: 14px;
+      transform: translateX(-50%) translateY(-12px);
+      padding: 10px 14px;
+      border-radius: 999px;
+      border: 2px solid rgba(255,255,255,.26);
+      background: rgba(0,0,0,.30);
+      color: rgba(255,255,255,.95);
+      font-weight: 900;
+      letter-spacing: .6px;
+      box-shadow: 0 10px 0 rgba(0,0,0,.22);
+      display:none;
+      align-items:center;
+      gap: 10px;
+      z-index: 10;
+      user-select:none;
+      pointer-events:none;
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      white-space: nowrap;
+    }
+    .janggunToast .dot{
+      width:10px;height:10px;border-radius:99px;
+      background: var(--gold);
+      box-shadow: 0 0 0 6px rgba(255,208,115,.18);
+    }
+    .janggunToast.show{
+      display:flex;
+      animation: toastPop .9s ease both;
+    }
+    @keyframes toastPop{
+      0%{ opacity:0; transform: translateX(-50%) translateY(-16px) scale(.96); }
+      18%{ opacity:1; transform: translateX(-50%) translateY(0px) scale(1.02); }
+      55%{ opacity:1; transform: translateX(-50%) translateY(0px) scale(1.00); }
+      100%{ opacity:0; transform: translateX(-50%) translateY(-10px) scale(.98); }
     }
 
     .topbar{
       display:flex;
-      align-items:center;
+      align-items:flex-start;
       justify-content:space-between;
       padding: 10px 14px;
       gap: 10px;
+      flex-wrap:wrap;
     }
+
     .brand{
       display:flex;
       align-items:center;
       gap:10px;
       font-weight: 900;
       letter-spacing:.4px;
+      min-width: 220px;
     }
     .brand .tag{
       font-size: 12px;
@@ -112,12 +146,41 @@
       border: 2px solid rgba(255,255,255,.25);
       background: rgba(0,0,0,.10);
       color: rgba(255,255,255,.9);
+      white-space: nowrap;
     }
+
+    .topRight{
+      display:flex;
+      flex-direction:column;
+      align-items:flex-end;
+      gap: 6px;
+      flex:1;
+      min-width: 220px;
+    }
+
     .help{
       font-size: 12px;
       color: rgba(255,255,255,.85);
       opacity:.9;
+      text-align:right;
     }
+
+    .recordRow{
+      display:flex;
+      gap: 8px;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+    }
+    .record{
+      font-size: 12px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 2px solid rgba(255,255,255,.22);
+      background: rgba(0,0,0,.18);
+      color: rgba(255,255,255,.88);
+      white-space: nowrap;
+    }
+    .record b{ color: var(--gold); }
 
     .stats{
       display:flex;
@@ -138,18 +201,20 @@
 
     .boardWrap{
       padding: 0 14px 14px 14px;
+      max-width:100%;
     }
-
     .boardStage{
       border-radius: 16px;
       border: 2px solid rgba(255,255,255,.22);
       background: radial-gradient(900px 600px at 50% 30%, rgba(30,45,85,.30) 0%, rgba(8,12,24,.92) 55%);
       box-shadow: inset 0 0 0 2px rgba(0,0,0,.25);
       padding: 12px;
+      max-width:100%;
     }
 
     canvas{
-      width: min(92vw, 620px);
+      width: 100%;
+      max-width: 620px;
       height: auto;
       aspect-ratio: 9 / 10;
       border-radius: 14px;
@@ -167,7 +232,6 @@
       padding: 0 14px 14px 14px;
       flex-wrap:wrap;
     }
-
     button{
       flex:1;
       min-width: 140px;
@@ -193,12 +257,12 @@
       background: rgba(255,93,93,.12);
     }
 
-    /* SIDE */
     .side{
       padding: 14px;
       display:flex;
       flex-direction:column;
       gap: 10px;
+      max-width:100%;
     }
     .side h2{
       margin:0;
@@ -255,11 +319,8 @@
       justify-content:center;
       box-shadow: 0 6px 0 rgba(0,0,0,.18);
     }
-    .capChip img{
-      width: 30px;
-      height: 30px;
-      display:block;
-    }
+    .capChip img{ width: 30px; height: 30px; display:block; }
+
     .log{
       padding: 10px 12px;
       border-radius: 14px;
@@ -274,7 +335,6 @@
       color: rgba(255,255,255,.78);
     }
 
-    /* Overlay */
     .overlay{
       position:fixed;
       inset:0;
@@ -323,13 +383,26 @@
     <div class="shell">
 
       <!-- MAIN -->
-      <div class="card frame">
+      <div class="card frame" id="mainCard">
+        <!-- ✅ 장군 표시 -->
+        <div class="janggunToast" id="janggunToast">
+          <span class="dot"></span>
+          <span id="janggunText">장군!</span>
+        </div>
+
         <div class="topbar">
           <div class="brand">
             <span>XGP</span>
             <span class="tag">장기 미니게임</span>
           </div>
-          <div class="help">클릭/탭: 말 선택 → 목적지</div>
+
+          <div class="topRight">
+            <div class="recordRow">
+              <div class="record">최고 연승: <b id="bestStreakTxt">0</b></div>
+              <div class="record">최고 난이도: <b id="bestDiffTxt">EASY</b></div>
+            </div>
+            <div class="help">클릭/탭: 말 선택 → 목적지 (AI는 1초 뒤 둠)</div>
+          </div>
         </div>
 
         <div class="stats">
@@ -369,8 +442,8 @@
 
         <div class="mini">
           규칙: <b>상대 ‘장(漢/楚)’을 잡으면 끝</b><br/>
-          AI는 내가 둔 뒤 <b>1초 후</b> 둡니다.<br/>
-          말을 둘 때 <b>“탁”</b> 소리가 납니다(터치/클릭 후 활성화).
+          말을 둘 때 <b>“탁”</b> 소리가 납니다.<br/>
+          <b>장군</b>이면 화면에 표시 + 소리.
         </div>
 
         <div class="capBox">
@@ -407,15 +480,12 @@
         당신은 <b>漢(아래)</b>입니다.<br/>
         목표: <b>상대 장(楚) 잡기</b><br/><br/>
         조작: <span class="kbd">말 클릭/탭</span> → <span class="kbd">이동 칸 클릭/탭</span><br/>
-        승리 시 불꽃 파티클이 터집니다.
+        말 이동은 <b>부드럽게 미끄러지는 애니메이션</b>으로 표시됩니다.
       </p>
       <div style="display:flex; gap:10px; flex-wrap:wrap;">
         <button class="primary" id="btnGo" style="flex:1;">게임 시작</button>
         <button id="btnCloseHelp" style="flex:1;">닫기</button>
       </div>
-      <p style="margin-top:10px; font-size:12px; opacity:.85;">
-        GitHub Pages에서는 파일명이 반드시 <b>index.html</b>이어야 /폴더/ 접속이 됩니다.
-      </p>
     </div>
   </div>
 
@@ -444,6 +514,10 @@
     diffTxt: document.getElementById('diffTxt'),
     streakTxt: document.getElementById('streakTxt'),
     statusTxt: document.getElementById('statusTxt'),
+
+    bestStreakTxt: document.getElementById('bestStreakTxt'),
+    bestDiffTxt: document.getElementById('bestDiffTxt'),
+
     log: document.getElementById('log'),
     logHint: document.getElementById('logHint'),
 
@@ -465,10 +539,13 @@
     resultBody: document.getElementById('resultBody'),
     btnAgain: document.getElementById('btnAgain'),
     btnCloseResult: document.getElementById('btnCloseResult'),
+
+    janggunToast: document.getElementById('janggunToast'),
+    janggunText: document.getElementById('janggunText'),
   };
 
   // -------------------------
-  // Audio (탁 소리) - WebAudio (외부파일 없음)
+  // Audio
   // -------------------------
   let audioCtx = null;
   function ensureAudio(){
@@ -477,20 +554,17 @@
   }
 
   function playTak(){
-    if(!audioCtx) return; // 사용자 첫 클릭 전에는 재생 안됨
+    if(!audioCtx) return;
     const t0 = audioCtx.currentTime;
 
-    // noise buffer
     const dur = 0.085;
     const bufferSize = Math.floor(audioCtx.sampleRate * dur);
     const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
     const data = buffer.getChannelData(0);
     for(let i=0;i<bufferSize;i++){
-      // 약간 더 "탁"하게: 초반 강하고 급감
       const env = Math.exp(-i/(bufferSize*0.18));
       data[i] = (Math.random()*2-1) * env;
     }
-
     const noise = audioCtx.createBufferSource();
     noise.buffer = buffer;
 
@@ -508,7 +582,6 @@
     band.connect(gain);
     gain.connect(audioCtx.destination);
 
-    // 살짝 "딱"하는 톤 추가
     const osc = audioCtx.createOscillator();
     osc.type = "triangle";
     const og = audioCtx.createGain();
@@ -525,12 +598,58 @@
     osc.stop(t0 + 0.09);
   }
 
+  // ✅ 장군 소리 (짧은 경보 느낌)
+  function playJanggun(){
+    if(!audioCtx) return;
+    const t0 = audioCtx.currentTime;
+
+    const osc1 = audioCtx.createOscillator();
+    const osc2 = audioCtx.createOscillator();
+    const g = audioCtx.createGain();
+    const f = audioCtx.createBiquadFilter();
+
+    osc1.type = "sawtooth";
+    osc2.type = "square";
+    f.type = "lowpass";
+    f.frequency.setValueAtTime(1400, t0);
+    f.Q.setValueAtTime(1.0, t0);
+
+    // 두 번 "삐-삐" 느낌
+    const seq = [
+      {start:0.00, dur:0.10, f1:540, f2:810},
+      {start:0.14, dur:0.12, f1:620, f2:930},
+    ];
+
+    g.gain.setValueAtTime(0.0001, t0);
+    for(const s of seq){
+      const a = t0 + s.start;
+      g.gain.setValueAtTime(0.0001, a);
+      g.gain.linearRampToValueAtTime(0.35, a + 0.02);
+      g.gain.exponentialRampToValueAtTime(0.0001, a + s.dur);
+
+      osc1.frequency.setValueAtTime(s.f1, a);
+      osc1.frequency.linearRampToValueAtTime(s.f1*1.12, a + s.dur);
+
+      osc2.frequency.setValueAtTime(s.f2, a);
+      osc2.frequency.linearRampToValueAtTime(s.f2*1.10, a + s.dur);
+    }
+
+    osc1.connect(f);
+    osc2.connect(f);
+    f.connect(g);
+    g.connect(audioCtx.destination);
+
+    osc1.start(t0);
+    osc2.start(t0);
+    osc1.stop(t0 + 0.35);
+    osc2.stop(t0 + 0.35);
+  }
+
   // -------------------------
   // Game constants
   // -------------------------
   const SIDE = { HAN:'H', CHO:'C' };
   const TYPE = { G:'G', A:'A', R:'R', H:'H', E:'E', C:'C', S:'S' };
-
   const PIECE_VALUE = {
     [TYPE.G]: 100000,
     [TYPE.R]: 900,
@@ -540,15 +659,7 @@
     [TYPE.A]: 200,
     [TYPE.S]: 120
   };
-
-  const HANJA = {
-    [TYPE.R]:'車',
-    [TYPE.H]:'馬',
-    [TYPE.E]:'象',
-    [TYPE.A]:'士',
-    [TYPE.C]:'炮',
-    [TYPE.S]:'卒',
-  };
+  const HANJA = { [TYPE.R]:'車',[TYPE.H]:'馬',[TYPE.E]:'象',[TYPE.A]:'士',[TYPE.C]:'炮',[TYPE.S]:'卒' };
   function pieceText(p){
     if(p.type === TYPE.G) return (p.side===SIDE.HAN) ? '漢' : '楚';
     return HANJA[p.type] || '?';
@@ -561,24 +672,27 @@
   let turn = SIDE.HAN;
   let gameOver = false;
   let thinking = false;
+
   let selected = null;
   let legalCache = [];
 
   let winStreak = loadStreak();
+  let bestStreak = loadBestStreak();
+  let bestDiffIdx = loadBestDiffIdx();
+
   let capturedByHan = [];
   let capturedByCho = [];
 
-  // AI delay
   const AI_DELAY_MS = 1000;
 
-  // Particles
   let particles = [];
   let lastTime = performance.now();
   let animT = 0;
 
-  // Nice piece images (SVG as Image) + captured chips
   const pieceImgCache = new Map();
   const chipImgCache = new Map();
+
+  let movingPiece = null;
 
   // -------------------------
   // Geometry
@@ -587,6 +701,7 @@
   const pad = 44;
   const cellW = (cv.width - pad*2) / (GRID.cols-1);
   const cellH = (cv.height - pad*2) / (GRID.rows-1);
+
   function xyToPx(x,y){ return { px: pad + x*cellW, py: pad + y*cellH }; }
   function inside(x,y){ return x>=0 && x<9 && y>=0 && y<10; }
   function pxToXY(px,py){
@@ -600,14 +715,40 @@
   }
 
   // -------------------------
-  // Difficulty (streak-based)
+  // Difficulty + Records
   // -------------------------
+  const DIFF_LIST = [
+    { name:'EASY',   depth:2, timeMs:260,  noise:0.22 },
+    { name:'NORMAL', depth:3, timeMs:520,  noise:0.12 },
+    { name:'HARD',   depth:4, timeMs:950,  noise:0.06 },
+    { name:'PRO',    depth:5, timeMs:1400, noise:0.03 },
+    { name:'BOSS',   depth:5, timeMs:1800, noise:0.00 },
+  ];
   function getDifficulty(streak){
-    if(streak <= 0) return { name:'EASY', depth:2, timeMs:260, noise:0.22 };
-    if(streak === 1) return { name:'NORMAL', depth:3, timeMs:520, noise:0.12 };
-    if(streak === 2) return { name:'HARD', depth:4, timeMs:950, noise:0.06 };
-    if(streak === 3) return { name:'PRO', depth:5, timeMs:1400, noise:0.03 };
-    return { name:'BOSS', depth:5, timeMs:1800, noise:0.00 };
+    if(streak <= 0) return DIFF_LIST[0];
+    if(streak === 1) return DIFF_LIST[1];
+    if(streak === 2) return DIFF_LIST[2];
+    if(streak === 3) return DIFF_LIST[3];
+    return DIFF_LIST[4];
+  }
+  function diffIndexByName(name){
+    return Math.max(0, DIFF_LIST.findIndex(d => d.name===name));
+  }
+  function updateRecordsUI(){
+    UI.bestStreakTxt.textContent = String(bestStreak);
+    UI.bestDiffTxt.textContent = DIFF_LIST[Math.max(0, Math.min(4,bestDiffIdx))].name;
+  }
+  function maybeUpdateRecords(){
+    if(winStreak > bestStreak){
+      bestStreak = winStreak;
+      saveBestStreak(bestStreak);
+    }
+    const curIdx = diffIndexByName(getDifficulty(winStreak).name);
+    if(curIdx > bestDiffIdx){
+      bestDiffIdx = curIdx;
+      saveBestDiffIdx(bestDiffIdx);
+    }
+    updateRecordsUI();
   }
 
   // -------------------------
@@ -635,6 +776,7 @@
     board = makeEmptyBoard();
     resetCaptured();
     particles = [];
+    movingPiece = null;
 
     // 楚 (top)
     put(0,0, SIDE.CHO, TYPE.R); put(8,0, SIDE.CHO, TYPE.R);
@@ -659,11 +801,11 @@
     thinking = false;
     selected = null;
     legalCache = [];
-
     UI.statusTxt.textContent = "진행중";
     UI.log.textContent = "";
     appendLog("새 판 시작! (漢: 플레이어, 楚: AI)");
     syncUI();
+    maybeUpdateRecords();
   }
 
   // -------------------------
@@ -883,11 +1025,45 @@
     return null;
   }
 
+  // ✅ 장군 체크 판정: side(수비측) 장이 상대에게 잡힐 수 있으면 true
+  function findGeneral(b, side){
+    for(let y=0;y<10;y++){
+      for(let x=0;x<9;x++){
+        const p=b[y][x];
+        if(p && p.side===side && p.type===TYPE.G) return {x,y};
+      }
+    }
+    return null;
+  }
+  function isInCheck(b, defenderSide){
+    const gpos = findGeneral(b, defenderSide);
+    if(!gpos) return false;
+    const attacker = (defenderSide===SIDE.HAN) ? SIDE.CHO : SIDE.HAN;
+    const moves = genAllMoves(b, attacker);
+    return moves.some(m => m.tx===gpos.x && m.ty===gpos.y);
+  }
+
+  // ✅ 장군 표시 + 소리
+  let toastTimer = null;
+  function showJanggun(attackerSide){
+    if(gameOver) return;
+    const who = (attackerSide===SIDE.HAN) ? "漢(플레이어)" : "楚(AI)";
+    UI.janggunText.textContent = `${who} 장군!`;
+    UI.janggunToast.classList.remove('show'); // 재트리거용
+    void UI.janggunToast.offsetWidth;
+    UI.janggunToast.classList.add('show');
+
+    playJanggun();
+
+    if(toastTimer) clearTimeout(toastTimer);
+    toastTimer = setTimeout(()=> UI.janggunToast.classList.remove('show'), 950);
+  }
+
   // -------------------------
   // AI (alpha-beta)
   // -------------------------
   function evaluate(b){
-    let score=0; // + means CHO advantage
+    let score=0;
     for(let y=0;y<10;y++){
       for(let x=0;x<9;x++){
         const p=b[y][x];
@@ -908,8 +1084,7 @@
     const start = performance.now();
     const timeLimit = diff.timeMs;
 
-    const side = SIDE.CHO;
-    const moves = genAllMoves(board, side);
+    const moves = genAllMoves(board, SIDE.CHO);
     if(moves.length===0) return null;
 
     moves.sort((a,b)=> {
@@ -970,16 +1145,13 @@
       const {nb} = applyMove(board, mv);
       let sc = alphabeta(nb, diff.depth-1, -Infinity, Infinity, false);
       if(diff.noise>0) sc += (Math.random()*2-1) * diff.noise * 200;
-      if(sc > bestScore){
-        bestScore = sc;
-        best = mv;
-      }
+      if(sc > bestScore){ bestScore=sc; best=mv; }
     }
     return best;
   }
 
   // -------------------------
-  // Nice piece images (SVG -> Image)
+  // Piece Images (SVG)
   // -------------------------
   function getPieceImage(p){
     const key = `${p.side}_${p.type}`;
@@ -991,7 +1163,6 @@
     const ring2 = isHan ? '#6ff2b7' : '#ff9a9a';
     const glow = isHan ? 'rgba(57,217,138,.35)' : 'rgba(255,93,93,.35)';
 
-    // 좀 더 "장기알"처럼: 아이보리 재질 + 금속 링 + 하이라이트
     const svg = `
     <svg xmlns="http://www.w3.org/2000/svg" width="180" height="180">
       <defs>
@@ -1010,24 +1181,15 @@
           <feDropShadow dx="0" dy="0" stdDeviation="10" flood-color="${glow}"/>
         </filter>
       </defs>
-
       <g filter="url(#shadow)">
-        <!-- base stone -->
         <circle cx="90" cy="92" r="70" fill="rgba(0,0,0,.18)"/>
         <circle cx="90" cy="88" r="70" fill="url(#stone)" stroke="${ring}" stroke-width="8"/>
         <circle cx="90" cy="88" r="62" fill="none" stroke="rgba(0,0,0,.12)" stroke-width="2"/>
         <circle cx="90" cy="88" r="66" fill="none" stroke="${ring2}" stroke-opacity=".45" stroke-width="2"/>
         <ellipse cx="74" cy="62" rx="46" ry="32" fill="url(#shine)" opacity=".95"/>
-        <!-- text -->
-        <text x="90" y="104"
-          text-anchor="middle"
-          font-size="66"
-          font-weight="900"
-          fill="${ring}"
-          style="paint-order: stroke; stroke: rgba(0,0,0,.18); stroke-width: 2px;"
-          font-family="ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace">
-          ${txt}
-        </text>
+        <text x="90" y="104" text-anchor="middle" font-size="66" font-weight="900"
+          fill="${ring}" style="paint-order: stroke; stroke: rgba(0,0,0,.18); stroke-width: 2px;"
+          font-family="ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace">${txt}</text>
       </g>
     </svg>`.trim();
 
@@ -1041,7 +1203,6 @@
     const key = `${p.side}_${p.type}`;
     if(chipImgCache.has(key)) return chipImgCache.get(key);
 
-    // 캡처 패널은 작은 크기용 SVG를 따로 만들어 더 선명하게
     const txt = pieceText(p);
     const isHan = p.side === SIDE.HAN;
     const ring = isHan ? '#39d98a' : '#ff5d5d';
@@ -1081,7 +1242,6 @@
       div.appendChild(img);
       UI.capHan.appendChild(div);
     }
-
     for(const p of capturedByCho.slice(-24)){
       const div = document.createElement('div');
       div.className = "capChip";
@@ -1094,7 +1254,7 @@
   }
 
   // -------------------------
-  // Particles (승리 불꽃)
+  // Particles
   // -------------------------
   function spawnBurst(x,y,isWin){
     const count = isWin ? 110 : 70;
@@ -1105,11 +1265,9 @@
       const vy = Math.sin(ang)*spd - (isWin ? (1.0+Math.random()*1.2) : 0.7);
       const life = (isWin ? 950 : 760) + Math.random()*700;
       const size = (isWin ? 3.2 : 2.8) + Math.random()*2.2;
-
       particles.push({x,y,vx,vy,life,maxLife:life,size,win:isWin});
     }
   }
-
   function fireResultParticles(isWin){
     const c = xyToPx(4,4.5);
     for(let b=0;b<(isWin?6:3);b++){
@@ -1118,10 +1276,20 @@
   }
 
   // -------------------------
+  // Smooth move animation
+  // -------------------------
+  function easeOutCubic(t){ return 1 - Math.pow(1 - t, 3); }
+  function startMoveAnimation(piece, fx,fy, tx,ty){
+    const dx = tx - fx, dy = ty - fy;
+    const dist = Math.sqrt(dx*dx + dy*dy);
+    const dur = Math.max(160, Math.min(320, 160 + dist*70));
+    movingPiece = { piece, fx,fy, tx,ty, start: performance.now(), dur };
+  }
+
+  // -------------------------
   // Gameplay
   // -------------------------
-  function isPlayersTurn(){ return turn===SIDE.HAN && !gameOver && !thinking; }
-
+  function isPlayersTurn(){ return turn===SIDE.HAN && !gameOver && !thinking && !movingPiece; }
   function selectAt(x,y){
     selected = {x,y};
     legalCache = genMovesForPiece(board,x,y);
@@ -1129,51 +1297,67 @@
 
   function doMove(mv){
     if(gameOver) return;
+    if(movingPiece) return;
 
-    const p = board[mv.fy][mv.fx];
+    const piece = board[mv.fy][mv.fx];
     const cap = board[mv.ty][mv.tx];
 
     board[mv.fy][mv.fx] = null;
-    board[mv.ty][mv.tx] = p;
+    board[mv.ty][mv.tx] = piece;
 
-    // sound
     playTak();
 
-    // capture record
     if(cap){
-      if(p.side===SIDE.HAN) capturedByHan.push(cap);
+      if(piece.side===SIDE.HAN) capturedByHan.push(cap);
       else capturedByCho.push(cap);
       renderCaptured();
     }
 
-    // ✅ 장 잡으면 즉시 종료
-    if(cap && cap.type === TYPE.G){
-      appendLog(`${p.side===SIDE.HAN?'漢':'楚'}: ${pieceText(p)}가 상대 장을 잡았습니다!`);
-      endGame(p.side);
-      return;
-    }
+    appendLog(`${piece.side===SIDE.HAN?'漢':'楚'}: ${pieceText(piece)} (${mv.fx},${mv.fy})→(${mv.tx},${mv.ty})` + (cap ? ` [${pieceText(cap)}]` : ""));
 
-    selected=null; legalCache=[];
-    appendLog(`${p.side===SIDE.HAN?'漢':'楚'}: ${pieceText(p)} (${mv.fx},${mv.fy})→(${mv.tx},${mv.ty})` + (cap ? ` [${pieceText(cap)}]` : ""));
+    startMoveAnimation(piece, mv.fx, mv.fy, mv.tx, mv.ty);
 
-    turn = (turn===SIDE.HAN) ? SIDE.CHO : SIDE.HAN;
-    syncUI();
+    const capturedGeneral = (cap && cap.type===TYPE.G);
+    const winnerIfAny = capturedGeneral ? piece.side : null;
 
-    if(turn===SIDE.CHO){
-      thinking = true;
+    const finalize = () => {
+      movingPiece = null;
+      selected = null;
+      legalCache = [];
+
+      if(winnerIfAny){
+        appendLog(`${piece.side===SIDE.HAN?'漢':'楚'}: 상대 장을 잡았습니다!`);
+        endGame(winnerIfAny);
+        return;
+      }
+
+      // ✅ 장군 체크 알림 (상대 장이 위협받는지)
+      const defender = (piece.side===SIDE.HAN) ? SIDE.CHO : SIDE.HAN;
+      if(isInCheck(board, defender)){
+        showJanggun(piece.side);
+        appendLog(`⚠️ 장군! (${piece.side===SIDE.HAN?'漢':'楚'} → ${defender===SIDE.HAN?'漢':'楚'})`);
+      }
+
+      turn = (turn===SIDE.HAN) ? SIDE.CHO : SIDE.HAN;
       syncUI();
 
-      // ✅ AI 텀 1초
-      setTimeout(() => {
-        if(gameOver){ thinking=false; syncUI(); return; }
-        const aiMv = pickMoveAI();
-        thinking = false;
+      if(turn===SIDE.CHO){
+        thinking = true;
         syncUI();
-        if(gameOver) return;
-        if(!aiMv){ endGame(SIDE.HAN); return; }
-        doMove(aiMv);
-      }, AI_DELAY_MS);
-    }
+
+        setTimeout(() => {
+          if(gameOver){ thinking=false; syncUI(); return; }
+          const aiMv = pickMoveAI();
+          thinking = false;
+          syncUI();
+          if(gameOver) return;
+          if(!aiMv){ endGame(SIDE.HAN); return; }
+          doMove(aiMv);
+        }, AI_DELAY_MS);
+      }
+    };
+
+    setTimeout(finalize, movingPiece.dur);
   }
 
   function endGame(winner){
@@ -1195,21 +1379,21 @@
       UI.resultBody.innerHTML = `내 <b>漢</b>이 잡혔습니다.<br/>연승이 <b>0</b>으로 초기화됩니다.`;
     }
 
+    maybeUpdateRecords();
     syncUI();
     fireResultParticles(win);
     UI.resultOverlay.classList.add('show');
   }
 
   // -------------------------
-  // Rendering (animated board)
+  // Rendering
   // -------------------------
   function drawBoard(t){
     ctx.clearRect(0,0,cv.width,cv.height);
 
-    const pulse = (Math.sin(t*0.002) + 1) * 0.5;   // 0..1
+    const pulse = (Math.sin(t*0.002) + 1) * 0.5;
     const pulse2 = (Math.sin(t*0.0013 + 1.7) + 1) * 0.5;
 
-    // glow background
     const g = ctx.createRadialGradient(cv.width*0.5, cv.height*0.22, 50, cv.width*0.5, cv.height*0.45, cv.width*0.70);
     g.addColorStop(0, `rgba(255, 208, 115, ${0.10 + 0.07*pulse})`);
     g.addColorStop(0.45, `rgba(60, 120, 255, ${0.10 + 0.05*pulse2})`);
@@ -1217,7 +1401,6 @@
     ctx.fillStyle = g;
     ctx.fillRect(0,0,cv.width,cv.height);
 
-    // grid box
     const tl = xyToPx(0,0);
     const br = xyToPx(8,9);
 
@@ -1227,7 +1410,6 @@
     ctx.rect(tl.px, tl.py, br.px - tl.px, br.py - tl.py);
     ctx.stroke();
 
-    // grid lines
     ctx.lineWidth = 2;
     for(let x=0;x<9;x++){
       const a = xyToPx(x,0), b = xyToPx(x,9);
@@ -1240,7 +1422,6 @@
       ctx.beginPath(); ctx.moveTo(a.px,a.py); ctx.lineTo(b.px,b.py); ctx.stroke();
     }
 
-    // palace diagonals
     ctx.lineWidth = 3;
     ctx.strokeStyle = `rgba(255, 220, 160, ${0.18 + 0.10*pulse})`;
     const lines = [
@@ -1252,7 +1433,6 @@
       ctx.beginPath(); ctx.moveTo(a.px,a.py); ctx.lineTo(b.px,b.py); ctx.stroke();
     }
 
-    // legal move dots
     if(selected){
       for(const m of legalCache){
         const c = xyToPx(m.tx,m.ty);
@@ -1267,27 +1447,35 @@
   function drawPieces(){
     ctx.imageSmoothingEnabled = true;
 
+    let movingDraw = null;
+    if(movingPiece){
+      const now = performance.now();
+      const t = Math.min(1, (now - movingPiece.start) / movingPiece.dur);
+      const e = easeOutCubic(t);
+      const a = xyToPx(movingPiece.fx, movingPiece.fy);
+      const b = xyToPx(movingPiece.tx, movingPiece.ty);
+      movingDraw = { piece: movingPiece.piece, x: a.px + (b.px - a.px)*e, y: a.py + (b.py - a.py)*e };
+    }
+
     for(let y=0;y<10;y++){
       for(let x=0;x<9;x++){
         const p = board[y][x];
         if(!p) continue;
+        if(movingPiece && x===movingPiece.tx && y===movingPiece.ty) continue;
+
         const c = xyToPx(x,y);
         const img = getPieceImage(p);
         const size = Math.min(cellW,cellH) * 0.92;
-
-        if(img.complete){
-          ctx.drawImage(img, c.px - size/2, c.py - size/2, size, size);
-        }else{
-          // fallback circle
-          ctx.beginPath();
-          ctx.fillStyle = "rgba(255,255,255,.65)";
-          ctx.arc(c.px,c.py,size*0.42,0,Math.PI*2);
-          ctx.fill();
-        }
+        if(img.complete) ctx.drawImage(img, c.px - size/2, c.py - size/2, size, size);
       }
     }
 
-    // selection ring
+    if(movingDraw){
+      const img = getPieceImage(movingDraw.piece);
+      const size = Math.min(cellW,cellH) * 0.92;
+      if(img.complete) ctx.drawImage(img, movingDraw.x - size/2, movingDraw.y - size/2, size, size);
+    }
+
     if(selected){
       const c = xyToPx(selected.x, selected.y);
       ctx.lineWidth = 7;
@@ -1309,7 +1497,6 @@
       const k = p.life / p.maxLife;
       const a = Math.min(1, k*1.2);
 
-      // physics
       p.vy += 0.012 * dt;
       p.vx *= 0.999;
       p.vy *= 0.999;
@@ -1332,16 +1519,15 @@
     lastTime = now;
     animT = now;
 
-    if(board){
-      drawBoard(animT);
-      drawPieces();
-      drawParticles(dt);
-    }
+    drawBoard(animT);
+    drawPieces();
+    drawParticles(dt);
+
     requestAnimationFrame(renderFrame);
   }
 
   // -------------------------
-  // UI / storage / logs
+  // UI / Logs / Storage
   // -------------------------
   function appendLog(s){
     UI.log.textContent += (UI.log.textContent ? "\n" : "") + s;
@@ -1358,16 +1544,32 @@
       gameOver ? "-" :
       thinking ? "楚(AI) 생각중…" :
       (turn===SIDE.HAN ? "漢(플레이어)" : "楚(AI)");
+
+    updateRecordsUI();
   }
 
-  function saveStreak(v){
-    try{ localStorage.setItem("janggi_streak", String(v)); }catch(e){}
-  }
+  function saveStreak(v){ try{ localStorage.setItem("janggi_streak", String(v)); }catch(e){} }
   function loadStreak(){
     try{
       const v = localStorage.getItem("janggi_streak");
       const n = v ? parseInt(v,10) : 0;
       return Number.isFinite(n) ? n : 0;
+    }catch(e){ return 0; }
+  }
+  function saveBestStreak(v){ try{ localStorage.setItem("janggi_best_streak", String(v)); }catch(e){} }
+  function loadBestStreak(){
+    try{
+      const v = localStorage.getItem("janggi_best_streak");
+      const n = v ? parseInt(v,10) : 0;
+      return Number.isFinite(n) ? n : 0;
+    }catch(e){ return 0; }
+  }
+  function saveBestDiffIdx(v){ try{ localStorage.setItem("janggi_best_diff_idx", String(v)); }catch(e){} }
+  function loadBestDiffIdx(){
+    try{
+      const v = localStorage.getItem("janggi_best_diff_idx");
+      const n = v ? parseInt(v,10) : 0;
+      return Number.isFinite(n) ? Math.max(0, Math.min(4,n)) : 0;
     }catch(e){ return 0; }
   }
 
@@ -1382,6 +1584,7 @@
     const scaleY = cv.height / rect.height;
     const px = (ev.clientX - rect.left) * scaleX;
     const py = (ev.clientY - rect.top) * scaleY;
+
     const cell = pxToXY(px,py);
     if(!cell) return;
 
@@ -1390,23 +1593,14 @@
 
     if(selected){
       const mv = legalCache.find(m => m.tx===x && m.ty===y);
-      if(mv){
-        doMove(mv);
-        return;
-      }
-      if(p && p.side===SIDE.HAN){
-        selectAt(x,y);
-      }else{
-        selected=null; legalCache=[];
-      }
+      if(mv){ doMove(mv); return; }
+      if(p && p.side===SIDE.HAN) selectAt(x,y);
+      else { selected=null; legalCache=[]; }
     }else{
-      if(p && p.side===SIDE.HAN){
-        selectAt(x,y);
-      }
+      if(p && p.side===SIDE.HAN) selectAt(x,y);
     }
   }
 
-  // pointerdown: 스크롤 방지 + 오디오 활성화
   cv.addEventListener('pointerdown', (ev) => {
     ev.preventDefault();
     ensureAudio();
@@ -1444,9 +1638,13 @@
   // -------------------------
   // Start
   // -------------------------
+  bestStreak = Math.max(bestStreak, winStreak);
+  maybeUpdateRecords();
+
   placeInitial();
   syncUI();
   renderCaptured();
+
   requestAnimationFrame((t) => { lastTime=t; requestAnimationFrame(renderFrame); });
 
 })();
