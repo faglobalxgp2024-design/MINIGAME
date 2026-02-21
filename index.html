@@ -30,34 +30,38 @@
     }
 
     .wrap{
-      max-width: 1100px;
+      max-width: 1140px;
       margin: 0 auto;
       padding: 14px;
       height: 100%;
       display:grid;
-      grid-template-columns: 1fr 320px;
+      grid-template-columns: 1fr 340px;
       gap: 14px;
+      align-items: start;
     }
-    @media (max-width: 900px){
+    @media (max-width: 980px){
       body{ overflow:auto; }
       .wrap{ grid-template-columns: 1fr; height:auto; }
     }
 
     .card{
-      background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+      background: linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,.02));
       border: 2px solid var(--line);
       border-radius: 14px;
       box-shadow: var(--shadow);
+      position: relative;
+      overflow: hidden;
     }
     .boardCard{ padding: 12px; display:flex; align-items:center; justify-content:center; }
     .sideCard{ padding: 12px; display:flex; flex-direction:column; gap: 10px; }
 
     .title{
       font-size: 16px;
-      font-weight: 800;
+      font-weight: 900;
       display:flex;
       align-items:center;
-      gap:8px;
+      justify-content: space-between;
+      gap:10px;
       margin: 0 0 6px 0;
     }
     .badge{
@@ -79,7 +83,7 @@
       border-radius: 12px;
     }
     .stat .k{ color: var(--muted); font-size: 12px; }
-    .stat .v{ font-size: 16px; margin-top: 6px; font-weight: 800; }
+    .stat .v{ font-size: 16px; margin-top: 6px; font-weight: 900; }
 
     button{
       border: 2px solid var(--line);
@@ -87,7 +91,7 @@
       color: var(--ink);
       border-radius: 12px;
       padding: 10px 12px;
-      font-weight: 800;
+      font-weight: 900;
       cursor:pointer;
       box-shadow: 0 6px 0 rgba(0,0,0,.25);
       transform: translateY(0);
@@ -97,7 +101,7 @@
     }
     button:active{ transform: translateY(3px); box-shadow: 0 3px 0 rgba(0,0,0,.25); }
     button.primary{
-      border-color: rgba(244,211,94,.5);
+      border-color: rgba(244,211,94,.55);
       background: rgba(244,211,94,.12);
     }
     button.danger{
@@ -117,7 +121,7 @@
 
     .log{
       flex:1;
-      min-height: 180px;
+      min-height: 140px;
       padding: 10px;
       background: rgba(0,0,0,.25);
       border: 2px solid var(--line);
@@ -129,52 +133,50 @@
       white-space: pre-wrap;
     }
 
-    .overlay{
-      position:fixed;
-      inset:0;
-      display:none;
+    .captured{
+      padding: 10px;
+      background: rgba(0,0,0,.22);
+      border: 2px solid var(--line);
+      border-radius: 12px;
+      display:flex;
+      flex-direction:column;
+      gap: 8px;
+    }
+    .captured h3{
+      margin:0;
+      font-size: 12px;
+      color: var(--muted);
+      font-weight: 900;
+      display:flex;
+      align-items:center;
+      justify-content: space-between;
+      gap:8px;
+    }
+    .capRow{
+      display:flex;
+      gap:6px;
+      flex-wrap: wrap;
+      align-items:center;
+      min-height: 34px;
+    }
+    .capChip{
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+      border: 2px solid rgba(42,58,82,.9);
+      background: rgba(255,255,255,.03);
+      display:flex;
       align-items:center;
       justify-content:center;
-      background: rgba(0,0,0,.55);
-      padding: 16px;
-      z-index: 10;
+      box-shadow: 0 6px 0 rgba(0,0,0,.22);
+      image-rendering: pixelated;
     }
-    .overlay.show{ display:flex; }
-    .modal{
-      width: min(560px, 100%);
-      padding: 14px;
-    }
-    .modal h2{
-      margin: 0 0 8px 0;
-      font-size: 18px;
-    }
-    .modal p{ margin: 0 0 12px 0; color: var(--muted); font-size: 13px; line-height: 1.5; }
-    .kbd{
-      padding: 2px 6px;
-      border: 2px solid var(--line);
-      border-radius: 8px;
-      background: rgba(0,0,0,.25);
-      color: var(--ink);
-      font-weight: 800;
-      font-size: 12px;
-      display:inline-block;
-      margin: 0 2px;
+    .capChip img{
+      width: 28px;
+      height: 28px;
+      image-rendering: pixelated;
     }
 
-    canvas{
-      width: min(92vw, 680px);
-      height: auto;
-      aspect-ratio: 9 / 10;
-      border-radius: 12px;
-      background: rgba(0,0,0,.18);
-      border: 2px solid var(--line);
-
-      /* ✅ 스크롤/줌/페이지 이동 방지 */
-      touch-action: none;
-      user-select: none;
-    }
-
-    .small{ font-size: 11px; color: var(--muted); }
     .pill{
       display:inline-flex;
       align-items:center;
@@ -190,6 +192,63 @@
     .dot.red{ background: var(--danger); }
     .dot.green{ background: var(--good); }
     .dot.yel{ background: var(--accent); }
+
+    canvas{
+      width: min(92vw, 700px);
+      height: auto;
+      aspect-ratio: 9 / 10;
+      border-radius: 12px;
+      background: rgba(0,0,0,.18);
+      border: 2px solid var(--line);
+      touch-action: none; /* 스크롤/줌 방지 */
+      user-select: none;
+    }
+
+    .overlay{
+      position:fixed;
+      inset:0;
+      display:none;
+      align-items:center;
+      justify-content:center;
+      background: rgba(0,0,0,.55);
+      padding: 16px;
+      z-index: 20;
+    }
+    .overlay.show{ display:flex; }
+    .modal{
+      width: min(600px, 100%);
+      padding: 14px;
+    }
+    .modal h2{
+      margin: 0 0 8px 0;
+      font-size: 18px;
+      display:flex;
+      align-items:center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+    .modal p{ margin: 0 0 12px 0; color: var(--muted); font-size: 13px; line-height: 1.55; }
+    .kbd{
+      padding: 2px 6px;
+      border: 2px solid var(--line);
+      border-radius: 8px;
+      background: rgba(0,0,0,.25);
+      color: var(--ink);
+      font-weight: 900;
+      font-size: 12px;
+      display:inline-block;
+      margin: 0 2px;
+    }
+    .bigResult{
+      margin-top: 10px;
+      padding: 12px;
+      border-radius: 12px;
+      border: 2px solid rgba(244,211,94,.35);
+      background: rgba(244,211,94,.08);
+      font-weight: 900;
+      line-height: 1.5;
+    }
+    .small{ font-size: 11px; color: var(--muted); }
   </style>
 </head>
 
@@ -200,45 +259,53 @@
     </div>
 
     <div class="card sideCard">
-      <div>
-        <div class="title">
-          장기 미니게임 <span class="badge">single file</span>
+      <div class="title">
+        <span>장기 미니게임 <span class="badge">single file</span></span>
+        <span class="pill"><span class="dot yel"></span> 승리 연출: ON</span>
+      </div>
+
+      <div class="row">
+        <div class="stat">
+          <div class="k">턴</div>
+          <div class="v" id="turnTxt">漢(플레이어)</div>
         </div>
-        <div class="row">
-          <div class="stat">
-            <div class="k">턴</div>
-            <div class="v" id="turnTxt">한(플레이어)</div>
-          </div>
-          <div class="stat">
-            <div class="k">난이도</div>
-            <div class="v" id="diffTxt">EASY</div>
-          </div>
-        </div>
-        <div class="row" style="margin-top:8px;">
-          <div class="stat">
-            <div class="k">연승</div>
-            <div class="v" id="streakTxt">0</div>
-          </div>
-          <div class="stat">
-            <div class="k">상태</div>
-            <div class="v" id="statusTxt">준비</div>
-          </div>
+        <div class="stat">
+          <div class="k">난이도</div>
+          <div class="v" id="diffTxt">EASY</div>
         </div>
       </div>
 
       <div class="row">
-        <button class="primary" id="btnStart">START</button>
-        <button id="btnNew">새 판</button>
+        <div class="stat">
+          <div class="k">연승</div>
+          <div class="v" id="streakTxt">0</div>
+        </div>
+        <div class="stat">
+          <div class="k">상태</div>
+          <div class="v" id="statusTxt">진행중</div>
+        </div>
+      </div>
+
+      <div class="row">
+        <button class="primary" id="btnNew">새 판</button>
+        <button id="btnHelp">도움말</button>
         <button class="danger" id="btnReset">연승 리셋</button>
       </div>
 
       <div class="hint">
-        <div class="pill"><span class="dot yel"></span> 규칙: <b>상대 ‘장(漢/楚)’을 잡으면 승리</b></div><br/>
+        <div class="pill"><span class="dot yel"></span> 규칙: <b>상대 ‘장(漢/楚)’을 잡으면 즉시 승패</b></div><br/>
         <div style="margin-top:6px;">
           조작: 말 클릭 → 이동 칸 클릭<br/>
-          AI 난이도: <b>연승이 올라갈수록</b> 더 똑똑해짐<br/>
-          (모바일: 탭으로 플레이)
+          AI 난이도: <b>연승이 올라갈수록</b> 더 깊게 탐색<br/>
+          (모바일에서 화면 내려가는 문제 해결됨)
         </div>
+      </div>
+
+      <div class="captured">
+        <h3><span>漢(플레이어)가 잡은 말</span><span class="small" id="capHanCount">0</span></h3>
+        <div class="capRow" id="capHan"></div>
+        <h3 style="margin-top:6px;"><span>楚(AI)가 잡은 말</span><span class="small" id="capChoCount">0</span></h3>
+        <div class="capRow" id="capCho"></div>
       </div>
 
       <div class="small">수순 로그</div>
@@ -248,18 +315,34 @@
 
   <div class="overlay show" id="overlay">
     <div class="card modal">
-      <h2>시작 준비!</h2>
+      <h2>
+        <span>시작 준비!</span>
+        <span class="badge">漢 vs 楚</span>
+      </h2>
       <p>
-        당신은 <b>한(아래)</b> 입니다. <br/>
-        목표는 단순: <b>상대 ‘장(楚)’ 잡기</b>.<br/><br/>
-        조작은 <span class="kbd">클릭/탭</span> 두 번: 말 선택 → 목적지 선택.
+        당신은 <b>漢(아래)</b> 입니다. 목표는 단순: <b>상대 장(楚)을 잡기</b>.<br/>
+        <span class="kbd">클릭/탭</span> 2번: 말 선택 → 목적지 선택
       </p>
       <div class="row">
         <button class="primary" id="btnGo">게임 시작</button>
         <button id="btnClose">닫기</button>
       </div>
       <p class="small" style="margin-top:10px;">
-        팁: 초반엔 <b>차/포</b> 라인을 열면 유리해요.
+        디자인: 픽셀 느낌(저해상도 스프라이트 확대) + 보드 라인 애니메이션 + 승리 파티클
+      </p>
+    </div>
+  </div>
+
+  <div class="overlay" id="resultOverlay">
+    <div class="card modal">
+      <h2 id="resultTitle">결과</h2>
+      <div class="bigResult" id="resultBody"></div>
+      <div class="row" style="margin-top:10px;">
+        <button class="primary" id="btnAgain">다시 하기</button>
+        <button id="btnCloseResult">닫기</button>
+      </div>
+      <p class="small" style="margin-top:10px;">
+        연승은 저장됩니다(localStorage). 패배하면 0으로 초기화됩니다.
       </p>
     </div>
   </div>
@@ -267,7 +350,7 @@
 <script>
 (() => {
   // -------------------------
-  // 기본 설정 / 상태
+  // DOM
   // -------------------------
   const cv = document.getElementById('cv');
   const ctx = cv.getContext('2d');
@@ -278,18 +361,32 @@
     streakTxt: document.getElementById('streakTxt'),
     statusTxt: document.getElementById('statusTxt'),
     log: document.getElementById('log'),
+
     overlay: document.getElementById('overlay'),
-    btnStart: document.getElementById('btnStart'),
-    btnNew: document.getElementById('btnNew'),
-    btnReset: document.getElementById('btnReset'),
     btnGo: document.getElementById('btnGo'),
     btnClose: document.getElementById('btnClose'),
+    btnHelp: document.getElementById('btnHelp'),
+    btnNew: document.getElementById('btnNew'),
+    btnReset: document.getElementById('btnReset'),
+
+    capHan: document.getElementById('capHan'),
+    capCho: document.getElementById('capCho'),
+    capHanCount: document.getElementById('capHanCount'),
+    capChoCount: document.getElementById('capChoCount'),
+
+    resultOverlay: document.getElementById('resultOverlay'),
+    resultTitle: document.getElementById('resultTitle'),
+    resultBody: document.getElementById('resultBody'),
+    btnAgain: document.getElementById('btnAgain'),
+    btnCloseResult: document.getElementById('btnCloseResult'),
   };
 
-  const SIDE = { HAN:'H', CHO:'C' }; // 한=플레이어(아래), 초=AI(위)
-  const TYPE = { G:'G', A:'A', R:'R', H:'H', E:'E', C:'C', S:'S' }; // 장,사,차,마,상,포,졸
+  // -------------------------
+  // Game constants
+  // -------------------------
+  const SIDE = { HAN:'H', CHO:'C' }; // 漢 = Player(bottom), 楚 = AI(top)
+  const TYPE = { G:'G', A:'A', R:'R', H:'H', E:'E', C:'C', S:'S' }; // General, Advisor, Rook, Horse, Elephant, Cannon, Soldier
 
-  // 점수(대략)
   const PIECE_VALUE = {
     [TYPE.G]: 100000,
     [TYPE.R]: 900,
@@ -300,7 +397,6 @@
     [TYPE.S]: 120
   };
 
-  // ✅ 한문 표시
   const HANJA = {
     [TYPE.R]:'車',
     [TYPE.H]:'馬',
@@ -316,26 +412,46 @@
     return HANJA[p.type] || '?';
   }
 
-  // SVG 이미지 캐시(단일 파일에서 이미지처럼 쓰기)
-  const pieceImgCache = new Map(); // key: "H_G", "C_R"...
-
-  // 10x9 board, y:0(top)~9(bottom), x:0~8
-  let board = null;
-  let turn = SIDE.HAN;        // 한부터
+  // -------------------------
+  // State
+  // -------------------------
+  let board = null; // [10][9]
+  let turn = SIDE.HAN;
   let gameOver = false;
-  let selected = null;        // {x,y}
-  let legalCache = [];        // 선택된 말의 이동 후보
-  let moveHistory = [];       // (필요하면 undo용)
-  let winStreak = loadStreak();
   let thinking = false;
 
-  // 좌표/그리드
+  let selected = null;
+  let legalCache = [];
+
+  let winStreak = loadStreak();
+
+  // captured pieces
+  let capturedByHan = [];
+  let capturedByCho = [];
+
+  // Animation
+  let lastTime = performance.now();
+  let timeMs = 0;
+
+  // Particles
+  let particles = []; // {x,y,vx,vy,life,maxLife,size,alpha}
+  let sparkBursts = 0;
+
+  // Pixel sprites cache
+  const spriteCache = new Map(); // key = "H_G" etc (Canvas)
+  const chipImgCache = new Map(); // key -> dataURI for DOM captured chips
+
+  // -------------------------
+  // Board geometry
+  // -------------------------
   const GRID = { cols:9, rows:10 };
   const pad = 40;
   const cellW = (cv.width - pad*2) / (GRID.cols-1);
   const cellH = (cv.height - pad*2) / (GRID.rows-1);
 
   function xyToPx(x,y){ return { px: pad + x*cellW, py: pad + y*cellH }; }
+  function inside(x,y){ return x>=0 && x<9 && y>=0 && y<10; }
+
   function pxToXY(px,py){
     const x = Math.round((px - pad)/cellW);
     const y = Math.round((py - pad)/cellH);
@@ -347,7 +463,7 @@
   }
 
   // -------------------------
-  // 난이도(연승 기반)
+  // Difficulty
   // -------------------------
   function getDifficulty(streak){
     if(streak <= 0) return { name:'EASY', depth:2, timeMs:220, noise:0.25 };
@@ -358,7 +474,7 @@
   }
 
   // -------------------------
-  // 초기 배치 (표준 장기 배치)
+  // Setup / reset
   // -------------------------
   function makeEmptyBoard(){
     const b = [];
@@ -369,11 +485,20 @@
     }
     return b;
   }
+  function put(x,y, side, type){ board[y][x] = { side, type }; }
+  function get(x,y){ return board[y][x]; }
+
+  function resetCaptured(){
+    capturedByHan = [];
+    capturedByCho = [];
+    renderCaptured();
+  }
 
   function placeInitial(){
     board = makeEmptyBoard();
+    resetCaptured();
 
-    // 초(위)
+    // 楚 (top)
     put(0,0, SIDE.CHO, TYPE.R); put(8,0, SIDE.CHO, TYPE.R);
     put(1,0, SIDE.CHO, TYPE.H); put(7,0, SIDE.CHO, TYPE.H);
     put(2,0, SIDE.CHO, TYPE.E); put(6,0, SIDE.CHO, TYPE.E);
@@ -382,7 +507,7 @@
     put(1,2, SIDE.CHO, TYPE.C); put(7,2, SIDE.CHO, TYPE.C);
     put(0,3, SIDE.CHO, TYPE.S); put(2,3, SIDE.CHO, TYPE.S); put(4,3, SIDE.CHO, TYPE.S); put(6,3, SIDE.CHO, TYPE.S); put(8,3, SIDE.CHO, TYPE.S);
 
-    // 한(아래)
+    // 漢 (bottom)
     put(0,9, SIDE.HAN, TYPE.R); put(8,9, SIDE.HAN, TYPE.R);
     put(1,9, SIDE.HAN, TYPE.H); put(7,9, SIDE.HAN, TYPE.H);
     put(2,9, SIDE.HAN, TYPE.E); put(6,9, SIDE.HAN, TYPE.E);
@@ -393,37 +518,30 @@
 
     turn = SIDE.HAN;
     gameOver = false;
+    thinking = false;
     selected = null;
     legalCache = [];
-    moveHistory = [];
-    thinking = false;
+    particles = [];
+    sparkBursts = 0;
 
     UI.statusTxt.textContent = "진행중";
     appendLog("새 판 시작! (漢: 플레이어, 楚: AI)");
     syncUI();
-    draw();
-  }
-
-  function put(x,y, side, type){
-    board[y][x] = { side, type };
   }
 
   // -------------------------
-  // 궁성 / 대각선 라인
+  // Palace / diagonals
   // -------------------------
   function inPalace(side, x,y){
     if(x<3||x>5) return false;
     if(side===SIDE.CHO) return (y>=0 && y<=2);
     return (y>=7 && y<=9);
   }
-
   function palaceDiagonalConnected(x1,y1,x2,y2){
     const key = (x,y)=> `${x},${y}`;
     const edges = new Set([
-      // 위 궁성
       `${key(3,0)}>${key(4,1)}`, `${key(4,1)}>${key(5,2)}`,
       `${key(5,0)}>${key(4,1)}`, `${key(4,1)}>${key(3,2)}`,
-      // 아래 궁성
       `${key(3,7)}>${key(4,8)}`, `${key(4,8)}>${key(5,9)}`,
       `${key(5,7)}>${key(4,8)}`, `${key(4,8)}>${key(3,9)}`
     ]);
@@ -433,11 +551,8 @@
   }
 
   // -------------------------
-  // 이동 생성
+  // Move generation
   // -------------------------
-  function inside(x,y){ return x>=0 && x<9 && y>=0 && y<10; }
-  function get(x,y){ return board[y][x]; }
-
   function genMovesForPiece(b, x,y){
     const p = b[y][x];
     if(!p) return [];
@@ -456,11 +571,8 @@
         let nx=x+dx, ny=y+dy;
         while(inside(nx,ny)){
           const q = b[ny][nx];
-          if(!q){ moves.push({fx:x,fy:y,tx:nx,ty:ny}); }
-          else{
-            if(q.side!==side) moves.push({fx:x,fy:y,tx:nx,ty:ny});
-            break;
-          }
+          if(!q) moves.push({fx:x,fy:y,tx:nx,ty:ny});
+          else { if(q.side!==side) moves.push({fx:x,fy:y,tx:nx,ty:ny}); break; }
           nx+=dx; ny+=dy;
         }
       }
@@ -486,12 +598,9 @@
           let px=x, py=y;
           while(true){
             const q = b[ny][nx];
-            if(!q){
-              moves.push({fx:x,fy:y,tx:nx,ty:ny});
-            }else{
-              if(q.side!==side) moves.push({fx:x,fy:y,tx:nx,ty:ny});
-              break;
-            }
+            if(!q) moves.push({fx:x,fy:y,tx:nx,ty:ny});
+            else { if(q.side!==side) moves.push({fx:x,fy:y,tx:nx,ty:ny}); break; }
+
             const nxt = neighbors(nx,ny).filter(([ax,ay]) => !(ax===px && ay===py));
             const vx=nx-px, vy=ny-py;
             const keep = nxt.find(([ax,ay]) => (ax-nx)===vx && (ay-ny)===vy);
@@ -511,18 +620,12 @@
         if(!inside(nx,ny)) continue;
         const screen = b[ny][nx];
         if(!screen) continue;
-        if(screen.type===TYPE.C) continue; // 포는 포를 못 넘김
+        if(screen.type===TYPE.C) continue;
         nx+=dx; ny+=dy;
         while(inside(nx,ny)){
           const q = b[ny][nx];
-          if(!q){
-            moves.push({fx:x,fy:y,tx:nx,ty:ny});
-          }else{
-            if(q.side!==side && q.type!==TYPE.C){
-              moves.push({fx:x,fy:y,tx:nx,ty:ny});
-            }
-            break;
-          }
+          if(!q) moves.push({fx:x,fy:y,tx:nx,ty:ny});
+          else { if(q.side!==side && q.type!==TYPE.C) moves.push({fx:x,fy:y,tx:nx,ty:ny}); break; }
           nx+=dx; ny+=dy;
         }
       }
@@ -579,7 +682,7 @@
     }
 
     else if(t===TYPE.S){
-      const dir = (side===SIDE.HAN) ? -1 : 1; // 한은 위로 전진
+      const dir = (side===SIDE.HAN) ? -1 : 1; // 漢 goes up
       add(x, y+dir);
       add(x-1, y);
       add(x+1, y);
@@ -628,10 +731,10 @@
   }
 
   // -------------------------
-  // AI (알파베타)
+  // AI (alpha-beta)
   // -------------------------
   function evaluate(b){
-    let score=0; // +면 초(AI) 유리
+    let score=0; // + means Cho(AI) advantage
     for(let y=0;y<10;y++){
       for(let x=0;x<9;x++){
         const p=b[y][x];
@@ -647,6 +750,22 @@
     return score;
   }
 
+  function winnerByGeneralMissing(b){
+    let hasHanG=false, hasChoG=false;
+    for(let y=0;y<10;y++){
+      for(let x=0;x<9;x++){
+        const p=b[y][x];
+        if(!p) continue;
+        if(p.type===TYPE.G){
+          if(p.side===SIDE.HAN) hasHanG=true; else hasChoG=true;
+        }
+      }
+    }
+    if(!hasChoG) return SIDE.HAN;
+    if(!hasHanG) return SIDE.CHO;
+    return null;
+  }
+
   function pickMoveAI(){
     const diff = getDifficulty(winStreak);
     const start = performance.now();
@@ -656,7 +775,7 @@
     const moves = genAllMoves(board, side);
     if(moves.length===0) return null;
 
-    // 캡처 우선 정렬
+    // capture-first ordering
     moves.sort((a,b)=> {
       const ca = board[a.ty][a.tx];
       const cb = board[b.ty][b.tx];
@@ -668,28 +787,10 @@
     let best = moves[0];
     let bestScore = -Infinity;
 
-    function winnerByCapturedGeneral(b){
-      // 보드 스캔: 장이 없으면 끝
-      let hasHanG=false, hasChoG=false;
-      for(let y=0;y<10;y++){
-        for(let x=0;x<9;x++){
-          const p=b[y][x];
-          if(!p) continue;
-          if(p.type===TYPE.G){
-            if(p.side===SIDE.HAN) hasHanG=true;
-            else hasChoG=true;
-          }
-        }
-      }
-      if(!hasChoG) return SIDE.HAN;
-      if(!hasHanG) return SIDE.CHO;
-      return null;
-    }
-
     function alphabeta(b, depth, alpha, beta, maximizing){
       if(performance.now() - start > timeLimit) return evaluate(b);
 
-      const winner = winnerByCapturedGeneral(b);
+      const winner = winnerByGeneralMissing(b);
       if(winner===SIDE.CHO) return  999999;
       if(winner===SIDE.HAN) return -999999;
 
@@ -732,9 +833,7 @@
       if(performance.now() - start > timeLimit) break;
       const {nb} = applyMove(board, mv);
       let sc = alphabeta(nb, diff.depth-1, -Infinity, Infinity, false);
-      if(diff.noise>0){
-        sc += (Math.random()*2-1) * diff.noise * 200;
-      }
+      if(diff.noise>0) sc += (Math.random()*2-1) * diff.noise * 200;
       if(sc > bestScore){
         bestScore = sc;
         best = mv;
@@ -744,9 +843,14 @@
   }
 
   // -------------------------
-  // 입력 / 게임 진행
+  // Input / gameplay
   // -------------------------
   function isPlayersTurn(){ return turn===SIDE.HAN && !gameOver && !thinking; }
+
+  function selectAt(x,y){
+    selected = {x,y};
+    legalCache = genMovesForPiece(board,x,y);
+  }
 
   function handleTap(ev){
     if(!isPlayersTurn()) return;
@@ -756,6 +860,7 @@
     const scaleY = cv.height / rect.height;
     const px = (ev.clientX - rect.left) * scaleX;
     const py = (ev.clientY - rect.top) * scaleY;
+
     const cell = pxToXY(px,py);
     if(!cell) return;
 
@@ -772,7 +877,6 @@
         selectAt(x,y);
       }else{
         selected=null; legalCache=[];
-        draw();
       }
     }else{
       if(p && p.side===SIDE.HAN){
@@ -781,244 +885,388 @@
     }
   }
 
-  function selectAt(x,y){
-    selected = {x,y};
-    legalCache = genMovesForPiece(board,x,y);
-    draw();
-  }
-
   function doMove(mv){
     if(gameOver) return;
 
     const p = board[mv.fy][mv.fx];
     const cap = board[mv.ty][mv.tx];
 
-    moveHistory.push({
-      board: cloneBoard(board),
-      turn,
-      streak: winStreak
-    });
-
+    // apply move
     board[mv.fy][mv.fx] = null;
     board[mv.ty][mv.tx] = p;
 
-    // ✅ 핵심: "장을 잡으면 즉시 종료"
+    // capture record
+    if(cap){
+      if(p.side === SIDE.HAN) capturedByHan.push(cap);
+      else capturedByCho.push(cap);
+      renderCaptured();
+    }
+
+    // ✅ "장 잡으면 즉시 종료" (멈춤 방지)
     if (cap && cap.type === TYPE.G) {
       appendLog(`${p.side===SIDE.HAN ? '漢' : '楚'}: ${pieceText(p)}가 상대 장을 잡았습니다!`);
       endGame(p.side);
-      draw();
       return;
     }
 
     selected=null; legalCache=[];
     appendLog(`${p.side===SIDE.HAN ? '漢' : '楚'}: ${pieceText(p)} (${mv.fx},${mv.fy})→(${mv.tx},${mv.ty})` + (cap ? `  [${pieceText(cap)} 잡음]` : ""));
 
-    // 턴 교대
     turn = (turn===SIDE.HAN) ? SIDE.CHO : SIDE.HAN;
     syncUI();
-    draw();
 
-    // AI 턴
+    // AI turn
     if(turn===SIDE.CHO){
       thinking = true;
       syncUI();
-
       setTimeout(() => {
-        // ✅ 게임이 끝났다면 AI 실행 취소
-        if (gameOver) { thinking=false; syncUI(); return; }
-
+        if(gameOver){ thinking=false; syncUI(); return; }
         const aiMv = pickMoveAI();
         thinking = false;
-
-        if (gameOver) { syncUI(); return; }
-        if(!aiMv){
-          endGame(SIDE.HAN);
-          draw();
-          return;
-        }
+        if(gameOver){ syncUI(); return; }
+        if(!aiMv){ endGame(SIDE.HAN); return; }
         doMove(aiMv);
       }, 50);
     }
   }
 
+  // -------------------------
+  // End game + Victory particles
+  // -------------------------
   function endGame(winner){
-    // ✅ 멈춤 방지: thinking 끄기
     thinking = false;
-
     gameOver = true;
-    const msg = (winner===SIDE.HAN) ? "승리! (상대 ‘楚’를 잡았습니다)" : "패배… (내 ‘漢’이 잡혔습니다)";
-    appendLog("================================");
-    appendLog(msg);
 
-    if(winner===SIDE.HAN){
+    if(winner === SIDE.HAN){
       winStreak++;
       saveStreak(winStreak);
       UI.statusTxt.textContent = "승리";
+      fireVictoryParticles(true);
+      showResult("승리!", `상대 <b>楚</b>를 잡았습니다.<br/>연승이 <b>${winStreak}</b>로 올라가 난이도가 상승합니다!`);
     }else{
       winStreak = 0;
       saveStreak(winStreak);
       UI.statusTxt.textContent = "패배";
+      fireVictoryParticles(false);
+      showResult("패배…", `내 <b>漢</b>이 잡혔습니다.<br/>연승이 <b>0</b>으로 초기화됩니다.`);
     }
+    appendLog("================================");
+    appendLog(UI.statusTxt.textContent);
     syncUI();
   }
 
-  // -------------------------
-  // SVG 말 이미지 생성 (단일 파일)
-  // -------------------------
-  function getPieceImage(p){
-    const key = `${p.side}_${p.type}`;
-    if(pieceImgCache.has(key)) return pieceImgCache.get(key);
+  function showResult(title, html){
+    UI.resultTitle.textContent = title;
+    UI.resultBody.innerHTML = html;
+    UI.resultOverlay.classList.add('show');
+  }
 
-    const txt = pieceText(p);
-    const isHan = (p.side === SIDE.HAN);
+  function fireVictoryParticles(isWin){
+    // spawn bursts near board center
+    const center = xyToPx(4,4.5);
+    const bursts = isWin ? 6 : 3;
+    sparkBursts = bursts;
 
-    const ring = isHan ? '#56f2a6' : '#ff5d5d';
-    const glow = isHan ? 'rgba(86,242,166,.35)' : 'rgba(255,93,93,.35)';
-    const fill = 'rgba(15,22,34,.92)';
+    for(let b=0;b<bursts;b++){
+      const ox = (Math.random()*2-1) * 120;
+      const oy = (Math.random()*2-1) * 140;
+      spawnBurst(center.px + ox, center.py + oy, isWin);
+    }
+  }
 
-    const svg = `
-    <svg xmlns="http://www.w3.org/2000/svg" width="128" height="128">
-      <defs>
-        <filter id="shadow" x="-30%" y="-30%" width="160%" height="160%">
-          <feDropShadow dx="0" dy="6" stdDeviation="4" flood-color="${glow}"/>
-        </filter>
-        <radialGradient id="g" cx="35%" cy="25%" r="70%">
-          <stop offset="0%" stop-color="rgba(255,255,255,.12)"/>
-          <stop offset="55%" stop-color="rgba(255,255,255,.03)"/>
-          <stop offset="100%" stop-color="rgba(0,0,0,.25)"/>
-        </radialGradient>
-      </defs>
-
-      <g filter="url(#shadow)">
-        <circle cx="64" cy="64" r="54" fill="${fill}" stroke="${ring}" stroke-width="6"/>
-        <circle cx="64" cy="64" r="50" fill="url(#g)" opacity="0.9"/>
-        <circle cx="64" cy="64" r="54" fill="none" stroke="rgba(215,224,234,.35)" stroke-width="2"/>
-        <text x="64" y="78"
-          text-anchor="middle"
-          font-size="58"
-          font-weight="900"
-          fill="${ring}"
-          font-family="ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', monospace">
-          ${txt}
-        </text>
-      </g>
-    </svg>`.trim();
-
-    const img = new Image();
-    img.src = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svg);
-    pieceImgCache.set(key, img);
-    return img;
+  function spawnBurst(x,y,isWin){
+    const count = isWin ? 80 : 50;
+    for(let i=0;i<count;i++){
+      const ang = Math.random()*Math.PI*2;
+      const spd = (isWin ? 2.6 : 2.0) + Math.random()*3.6;
+      const vx = Math.cos(ang)*spd;
+      const vy = Math.sin(ang)*spd - (isWin ? (1.0+Math.random()*1.2) : 0.6);
+      const life = (isWin ? 900 : 700) + Math.random()*650;
+      const size = (isWin ? 3 : 2) + Math.random()*2;
+      particles.push({
+        x, y, vx, vy,
+        life, maxLife: life,
+        size,
+        alpha: 1,
+        win: isWin
+      });
+    }
   }
 
   // -------------------------
-  // 렌더링
+  // Pixel piece sprites (low-res canvas scaled up)
   // -------------------------
-  function draw(){
+  function spriteKey(p){ return `${p.side}_${p.type}`; }
+
+  function getPieceSprite(p){
+    const key = spriteKey(p);
+    if(spriteCache.has(key)) return spriteCache.get(key);
+
+    // low-res
+    const s = 32;
+    const c = document.createElement('canvas');
+    c.width = s; c.height = s;
+    const g = c.getContext('2d');
+
+    // pixel-ish rendering: no smoothing on main draw, but here it's fine
+    const isHan = p.side === SIDE.HAN;
+    const ring = isHan ? '#56f2a6' : '#ff5d5d';
+    const fill = '#0f1622';
+
+    // background coin (pixel circle)
+    const cx = 16, cy = 16;
+    const r = 13;
+
+    // shadow
+    for(let yy=0; yy<s; yy++){
+      for(let xx=0; xx<s; xx++){
+        const dx = xx - (cx+1), dy = yy - (cy+2);
+        const d = Math.sqrt(dx*dx + dy*dy);
+        if(d < r) {
+          g.fillStyle = 'rgba(0,0,0,.25)';
+          g.fillRect(xx,yy,1,1);
+        }
+      }
+    }
+
+    // fill
+    for(let yy=0; yy<s; yy++){
+      for(let xx=0; xx<s; xx++){
+        const dx = xx - cx, dy = yy - cy;
+        const d = Math.sqrt(dx*dx + dy*dy);
+        if(d < r){
+          // subtle highlight
+          const hl = Math.max(0, 1 - Math.sqrt((xx-11)**2 + (yy-10)**2)/16);
+          const base = 18 + Math.floor(hl*20);
+          g.fillStyle = `rgb(${base},${base+6},${base+14})`;
+          g.fillRect(xx,yy,1,1);
+        }
+      }
+    }
+
+    // ring
+    for(let yy=0; yy<s; yy++){
+      for(let xx=0; xx<s; xx++){
+        const dx = xx - cx, dy = yy - cy;
+        const d = Math.sqrt(dx*dx + dy*dy);
+        if(d >= r-1.2 && d <= r){
+          g.fillStyle = ring;
+          g.fillRect(xx,yy,1,1);
+        }
+      }
+    }
+
+    // inner line
+    for(let yy=0; yy<s; yy++){
+      for(let xx=0; xx<s; xx++){
+        const dx = xx - cx, dy = yy - cy;
+        const d = Math.sqrt(dx*dx + dy*dy);
+        if(d >= r-3.0 && d <= r-2.0){
+          g.fillStyle = 'rgba(215,224,234,.35)';
+          g.fillRect(xx,yy,1,1);
+        }
+      }
+    }
+
+    // text
+    const t = pieceText(p);
+    g.fillStyle = ring;
+    g.font = '900 18px ui-monospace, monospace';
+    g.textAlign = 'center';
+    g.textBaseline = 'middle';
+    // slight outline pixel look
+    g.fillText(t, cx, cy+1);
+
+    spriteCache.set(key, c);
+    return c;
+  }
+
+  // DOM chip image (dataURI) for captured panel
+  function getChipImageURI(piece){
+    const key = spriteKey(piece);
+    if(chipImgCache.has(key)) return chipImgCache.get(key);
+    const spr = getPieceSprite(piece);
+    const uri = spr.toDataURL('image/png');
+    chipImgCache.set(key, uri);
+    return uri;
+  }
+
+  function renderCaptured(){
+    UI.capHan.innerHTML = "";
+    UI.capCho.innerHTML = "";
+    UI.capHanCount.textContent = String(capturedByHan.length);
+    UI.capChoCount.textContent = String(capturedByCho.length);
+
+    for(const p of capturedByHan.slice(-18)){
+      const div = document.createElement('div');
+      div.className = "capChip";
+      const img = document.createElement('img');
+      img.src = getChipImageURI(p);
+      img.alt = pieceText(p);
+      div.appendChild(img);
+      UI.capHan.appendChild(div);
+    }
+    for(const p of capturedByCho.slice(-18)){
+      const div = document.createElement('div');
+      div.className = "capChip";
+      const img = document.createElement('img');
+      img.src = getChipImageURI(p);
+      img.alt = pieceText(p);
+      div.appendChild(img);
+      UI.capCho.appendChild(div);
+    }
+  }
+
+  // -------------------------
+  // Rendering (animated board + pieces + particles)
+  // -------------------------
+  function drawBoard(t){
+    // animated glow
+    const pulse = (Math.sin(t*0.002) + 1) * 0.5; // 0..1
+    const pulse2 = (Math.sin(t*0.0013 + 1.2) + 1) * 0.5;
+
+    // background vignette
     ctx.clearRect(0,0,cv.width,cv.height);
+    const grd = ctx.createRadialGradient(cv.width*0.5, cv.height*0.2, 80, cv.width*0.5, cv.height*0.5, cv.width*0.75);
+    grd.addColorStop(0, `rgba(20,36,58,${0.22+0.08*pulse})`);
+    grd.addColorStop(1, 'rgba(0,0,0,0)');
+    ctx.fillStyle = grd;
+    ctx.fillRect(0,0,cv.width,cv.height);
 
-    // 배경 그리드
-    ctx.lineWidth = 4;
-    ctx.strokeStyle = "rgba(42,58,82,.9)";
-
+    // outer border
     const tl = xyToPx(0,0);
     const br = xyToPx(8,9);
+
+    ctx.lineWidth = 4;
+    ctx.strokeStyle = `rgba(42,58,82,${0.85 + 0.10*pulse})`;
     ctx.beginPath();
     ctx.rect(tl.px, tl.py, br.px - tl.px, br.py - tl.py);
     ctx.stroke();
 
+    // grid lines
     ctx.lineWidth = 2;
     for(let x=0;x<9;x++){
       const p1 = xyToPx(x,0), p2 = xyToPx(x,9);
-      ctx.beginPath();
-      ctx.moveTo(p1.px,p1.py);
-      ctx.lineTo(p2.px,p2.py);
-      ctx.stroke();
+      ctx.strokeStyle = `rgba(42,58,82,${0.55 + 0.12*pulse2})`;
+      ctx.beginPath(); ctx.moveTo(p1.px,p1.py); ctx.lineTo(p2.px,p2.py); ctx.stroke();
     }
     for(let y=0;y<10;y++){
       const p1 = xyToPx(0,y), p2 = xyToPx(8,y);
-      ctx.beginPath();
-      ctx.moveTo(p1.px,p1.py);
-      ctx.lineTo(p2.px,p2.py);
-      ctx.stroke();
+      ctx.strokeStyle = `rgba(42,58,82,${0.55 + 0.12*pulse})`;
+      ctx.beginPath(); ctx.moveTo(p1.px,p1.py); ctx.lineTo(p2.px,p2.py); ctx.stroke();
     }
 
-    drawPalaceLines();
-
-    // 이동 후보 하이라이트
-    if(selected){
-      for(const m of legalCache){
-        const c = xyToPx(m.tx,m.ty);
-        ctx.beginPath();
-        ctx.fillStyle = "rgba(244,211,94,.22)";
-        ctx.arc(c.px, c.py, Math.min(cellW,cellH)*0.22, 0, Math.PI*2);
-        ctx.fill();
-      }
-    }
-
-    // 말
-    for(let y=0;y<10;y++){
-      for(let x=0;x<9;x++){
-        const p = board[y][x];
-        if(!p) continue;
-        drawPiece(x,y,p);
-      }
-    }
-
-    // 선택 테두리
-    if(selected){
-      const c = xyToPx(selected.x, selected.y);
-      ctx.lineWidth = 6;
-      ctx.strokeStyle = "rgba(244,211,94,.95)";
-      ctx.beginPath();
-      ctx.arc(c.px,c.py, Math.min(cellW,cellH)*0.40, 0, Math.PI*2);
-      ctx.stroke();
-    }
-  }
-
-  function drawPalaceLines(){
+    // palace diagonals (animated)
     ctx.lineWidth = 3;
-    ctx.strokeStyle = "rgba(145,160,177,.6)";
-
+    ctx.strokeStyle = `rgba(145,160,177,${0.45 + 0.20*pulse})`;
     const lines = [
       [[3,0],[5,2]], [[5,0],[3,2]],
       [[3,7],[5,9]], [[5,7],[3,9]],
     ];
     for(const [[x1,y1],[x2,y2]] of lines){
       const a=xyToPx(x1,y1), b=xyToPx(x2,y2);
-      ctx.beginPath();
-      ctx.moveTo(a.px,a.py);
-      ctx.lineTo(b.px,b.py);
-      ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(a.px,a.py); ctx.lineTo(b.px,b.py); ctx.stroke();
+    }
+
+    // legal move dots
+    if(selected){
+      for(const m of legalCache){
+        const c = xyToPx(m.tx,m.ty);
+        ctx.beginPath();
+        ctx.fillStyle = `rgba(244,211,94,${0.16 + 0.10*pulse})`;
+        ctx.arc(c.px, c.py, Math.min(cellW,cellH)*0.22, 0, Math.PI*2);
+        ctx.fill();
+      }
     }
   }
 
-  function drawPiece(x,y,p){
-    const c = xyToPx(x,y);
-    const r = Math.min(cellW,cellH)*0.38;
+  function drawPieces(){
+    // pixel scaling: IMPORTANT (piece sprites)
+    ctx.imageSmoothingEnabled = false;
 
-    const img = getPieceImage(p);
-    const size = r*2.25;
-
-    if(!img.complete){
-      // fallback
-      ctx.beginPath();
-      ctx.fillStyle = "rgba(0,0,0,.25)";
-      ctx.arc(c.px,c.py,r,0,Math.PI*2);
-      ctx.fill();
-
-      ctx.fillStyle = (p.side===SIDE.HAN) ? "rgba(86,242,166,.95)" : "rgba(255,93,93,.95)";
-      ctx.font = `bold ${Math.floor(r*1.1)}px ui-monospace, monospace`;
-      ctx.textAlign = "center";
-      ctx.textBaseline = "middle";
-      ctx.fillText(pieceText(p), c.px, c.py+1);
-      return;
+    for(let y=0;y<10;y++){
+      for(let x=0;x<9;x++){
+        const p = board[y][x];
+        if(!p) continue;
+        const c = xyToPx(x,y);
+        const spr = getPieceSprite(p);
+        const size = Math.min(cellW,cellH) * 0.92; // big like real janggi stone
+        ctx.drawImage(spr, c.px - size/2, c.py - size/2, size, size);
+      }
     }
 
-    ctx.drawImage(img, c.px - size/2, c.py - size/2, size, size);
+    // selected ring
+    if(selected){
+      const c = xyToPx(selected.x, selected.y);
+      ctx.imageSmoothingEnabled = true;
+      ctx.lineWidth = 6;
+      ctx.strokeStyle = 'rgba(244,211,94,.95)';
+      ctx.beginPath();
+      ctx.arc(c.px, c.py, Math.min(cellW,cellH)*0.44, 0, Math.PI*2);
+      ctx.stroke();
+      ctx.imageSmoothingEnabled = false;
+    }
+  }
+
+  function drawParticles(dt){
+    if(particles.length===0) return;
+
+    // pixel particles
+    ctx.imageSmoothingEnabled = false;
+
+    for(let i=particles.length-1;i>=0;i--){
+      const p = particles[i];
+      p.life -= dt;
+      if(p.life <= 0){
+        particles.splice(i,1);
+        continue;
+      }
+
+      const k = p.life / p.maxLife;
+      p.alpha = Math.min(1, k*1.3);
+
+      // gravity + drag
+      p.vy += 0.012 * dt;
+      p.vx *= 0.999;
+      p.vy *= 0.999;
+
+      p.x += p.vx * (dt/16.7);
+      p.y += p.vy * (dt/16.7);
+
+      // choose color
+      const baseA = 0.85 * p.alpha;
+      // win: gold-ish + green sparks, lose: reddish
+      const col = p.win
+        ? (Math.random()<0.15 ? `rgba(86,242,166,${baseA})` : `rgba(244,211,94,${baseA})`)
+        : `rgba(255,93,93,${baseA})`;
+
+      ctx.fillStyle = col;
+      const sz = Math.max(2, Math.floor(p.size));
+      // draw as "pixel blocks"
+      ctx.fillRect(p.x - sz/2, p.y - sz/2, sz, sz);
+
+      if(p.win && Math.random()<0.12){
+        // little trailing pixel
+        ctx.fillRect(p.x - sz/2 - 2, p.y - sz/2 + 2, 2, 2);
+      }
+    }
+  }
+
+  function renderFrame(now){
+    const dt = Math.min(40, now - lastTime);
+    lastTime = now;
+    timeMs = now;
+
+    if(board){
+      drawBoard(timeMs);
+      drawPieces();
+      drawParticles(dt);
+    }
+    requestAnimationFrame(renderFrame);
   }
 
   // -------------------------
-  // UI / 로그 / 저장
+  // UI / logs / storage
   // -------------------------
   function appendLog(s){
     UI.log.textContent += (UI.log.textContent ? "\n" : "") + s;
@@ -1031,10 +1279,8 @@
       gameOver ? "-" :
       thinking ? "楚(AI) 생각중…" :
       (turn===SIDE.HAN ? "漢(플레이어)" : "楚(AI)");
-
     UI.diffTxt.textContent = diff.name;
     UI.streakTxt.textContent = String(winStreak);
-
     if(!gameOver && !thinking) UI.statusTxt.textContent = "진행중";
   }
 
@@ -1050,35 +1296,51 @@
   }
 
   // -------------------------
-  // 버튼 / 오버레이
+  // Events / buttons
   // -------------------------
-  UI.btnStart.addEventListener('click', () => {
-    UI.overlay.classList.add('show');
-  });
   UI.btnGo.addEventListener('click', () => {
     UI.overlay.classList.remove('show');
-    if(!board) placeInitial();
   });
   UI.btnClose.addEventListener('click', () => UI.overlay.classList.remove('show'));
 
-  UI.btnNew.addEventListener('click', () => placeInitial());
+  UI.btnHelp.addEventListener('click', () => UI.overlay.classList.add('show'));
+
+  UI.btnNew.addEventListener('click', () => {
+    UI.resultOverlay.classList.remove('show');
+    placeInitial();
+    syncUI();
+  });
+
   UI.btnReset.addEventListener('click', () => {
     winStreak = 0;
     saveStreak(winStreak);
     appendLog("연승 리셋!");
     syncUI();
-    draw();
   });
 
-  // ✅ 입력(스크롤 방지): passive:false + preventDefault
+  UI.btnAgain.addEventListener('click', () => {
+    UI.resultOverlay.classList.remove('show');
+    placeInitial();
+    syncUI();
+  });
+  UI.btnCloseResult.addEventListener('click', () => {
+    UI.resultOverlay.classList.remove('show');
+  });
+
+  // ✅ 스크롤 방지 핵심: passive:false + preventDefault
   cv.addEventListener('pointerdown', (ev) => {
     ev.preventDefault();
     handleTap(ev);
   }, { passive: false });
 
-  // 첫 화면
-  syncUI();
+  // -------------------------
+  // Start
+  // -------------------------
   placeInitial();
+  syncUI();
+  renderCaptured();
+  requestAnimationFrame((t) => { lastTime=t; requestAnimationFrame(renderFrame); });
+
 })();
 </script>
 </body>
