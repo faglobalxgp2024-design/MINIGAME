@@ -6,28 +6,23 @@
   <title>XGP 장기 미니게임</title>
   <style>
     :root{
-      /* 전체 배경: 따뜻한 목재/종이 느낌 */
       --bgA:#d9b67c;
       --bgB:#caa56b;
       --bgC:#b78b55;
 
-      /* 카드/판 색 */
       --paper:#f1d6a6;
       --wood:#c79b63;
       --wood2:#b78953;
 
-      /* 선/잉크 */
       --grid:#51361f;
       --gridSoft: rgba(81,54,31,.55);
       --ink:#2a1a10;
 
-      /* 말 색 (사진 느낌: 빨강/파랑) */
       --red:#d63a2b;
       --red2:#ff6a5f;
       --blue:#1e5bd8;
       --blue2:#5a8cff;
 
-      /* UI */
       --ui:#ffffff;
       --uiSoft: rgba(255,255,255,.80);
       --uiGlass: rgba(255,255,255,.16);
@@ -95,7 +90,6 @@
       -webkit-backdrop-filter: blur(6px);
     }
 
-    /* 메인 프레임 (목재 테두리 느낌) */
     .frame{
       border-radius: 18px;
       border: 2px solid rgba(58,36,20,.45);
@@ -105,45 +99,59 @@
       max-width:100%;
     }
 
-    /* ✅ 토스트 (장군/외통수 등) */
+    /* ✅ 장군 토스트: 보드 중앙 "스탬프" 느낌 */
     .toast{
       position:absolute;
       left:50%;
-      top: 14px;
-      transform: translateX(-50%) translateY(-12px);
-      padding: 10px 14px;
-      border-radius: 999px;
+      top: 50%;
+      transform: translate(-50%, -50%) scale(.96);
+      padding: 14px 18px;
+      border-radius: 18px;
       border: 2px solid rgba(255,255,255,.26);
-      background: rgba(0,0,0,.34);
-      color: rgba(255,255,255,.95);
-      font-weight: 900;
-      letter-spacing: .6px;
-      box-shadow: 0 10px 0 rgba(0,0,0,.20);
+      background:
+        radial-gradient(220px 140px at 30% 30%, rgba(255,255,255,.22), rgba(255,255,255,0) 55%),
+        rgba(0,0,0,.42);
+      color: rgba(255,255,255,.98);
+      font-weight: 1000;
+      letter-spacing: .8px;
+      box-shadow: 0 14px 0 rgba(0,0,0,.22);
       display:none;
       align-items:center;
-      gap: 10px;
-      z-index: 20;
+      gap: 12px;
+      z-index: 40;
       user-select:none;
       pointer-events:none;
       backdrop-filter: blur(6px);
       -webkit-backdrop-filter: blur(6px);
       white-space: nowrap;
-      font-size: 18px;
     }
     .toast .dot{
-      width:10px;height:10px;border-radius:99px;
+      width:12px;height:12px;border-radius:99px;
       background: #ffd073;
-      box-shadow: 0 0 0 6px rgba(255,208,115,.18);
+      box-shadow: 0 0 0 7px rgba(255,208,115,.18);
+      flex:0 0 auto;
+    }
+    .toast .big{
+      font-size: 34px;
+      line-height: 1;
+      text-shadow: 0 2px 0 rgba(0,0,0,.18);
+    }
+    .toast .sub{
+      font-size: 12px;
+      opacity:.92;
+      font-weight: 900;
+      letter-spacing: .2px;
+      margin-left: 2px;
     }
     .toast.show{
       display:flex;
       animation: toastPop .95s ease both;
     }
     @keyframes toastPop{
-      0%{ opacity:0; transform: translateX(-50%) translateY(-16px) scale(.96); }
-      18%{ opacity:1; transform: translateX(-50%) translateY(0px) scale(1.05); }
-      60%{ opacity:1; transform: translateX(-50%) translateY(0px) scale(1.02); }
-      100%{ opacity:0; transform: translateX(-50%) translateY(-10px) scale(.98); }
+      0%{ opacity:0; transform: translate(-50%, -55%) scale(.92); }
+      18%{ opacity:1; transform: translate(-50%, -50%) scale(1.06); }
+      60%{ opacity:1; transform: translate(-50%, -50%) scale(1.02); }
+      100%{ opacity:0; transform: translate(-50%, -52%) scale(.98); }
     }
 
     .topbar{
@@ -224,7 +232,6 @@
     .pill .k{ font-size: 12px; color: rgba(255,255,255,.82); }
     .pill .v{ font-size: 16px; font-weight: 900; margin-top: 6px; }
 
-    /* ✅ 장기판 래핑(사진 느낌: 밝은 판 + 목재 테두리) */
     .boardWrap{
       padding: 0 14px 14px 14px;
       max-width:100%;
@@ -241,6 +248,7 @@
         0 16px 0 rgba(0,0,0,.16);
       padding: 12px;
       max-width:100%;
+      position: relative;
     }
 
     canvas{
@@ -415,7 +423,6 @@
       font-size: 12px;
     }
 
-    /* ✅ 승리 연출(외통수/승리 시 폭죽 + 플래시) */
     .flash{
       position:fixed;
       inset:0;
@@ -464,9 +471,13 @@
     <div class="shell">
 
       <div class="card frame" id="mainCard">
+        <!-- ✅ 중앙 토스트 -->
         <div class="toast" id="toast">
           <span class="dot"></span>
-          <span id="toastText">장군!</span>
+          <div>
+            <div class="big" id="toastText">장군!</div>
+            <div class="sub" id="toastSub">—</div>
+          </div>
         </div>
 
         <div class="topbar">
@@ -616,6 +627,7 @@
 
     toast: document.getElementById('toast'),
     toastText: document.getElementById('toastText'),
+    toastSub: document.getElementById('toastSub'),
 
     flash: document.getElementById('flash'),
     fw: document.getElementById('fw'),
@@ -776,15 +788,10 @@
     return HANJA[p.type] || '?';
   }
 
-  /* ✅ 요청 반영: 글자 크기 규칙
-    - 장(漢/楚): 가장 큼
-    - 사/졸(士/卒): 작게
-    - 마/포/차/상(馬/炮/車/象): 크게
-  */
   function pieceFontSize(type){
-    if(type === TYPE.G) return 82;                 // 장 가장 큼
-    if(type === TYPE.A || type === TYPE.S) return 56; // 사/졸 작게
-    if(type === TYPE.H || type === TYPE.E || type === TYPE.R || type === TYPE.C) return 70; // 마/포/차/상 크게
+    if(type === TYPE.G) return 82;
+    if(type === TYPE.A || type === TYPE.S) return 56;
+    if(type === TYPE.H || type === TYPE.E || type === TYPE.R || type === TYPE.C) return 70;
     return 66;
   }
   function chipFontSize(type){
@@ -944,6 +951,9 @@
     if(side===SIDE.CHO) return (y>=0 && y<=2);
     return (y>=7 && y<=9);
   }
+  function inAnyPalace(x,y){
+    return inPalace(SIDE.CHO,x,y) || inPalace(SIDE.HAN,x,y);
+  }
   function palaceDiagonalConnected(x1,y1,x2,y2){
     const key = (x,y)=> `${x},${y}`;
     const edges = new Set([
@@ -955,6 +965,47 @@
     const a = `${key(x1,y1)}>${key(x2,y2)}`;
     const b = `${key(x2,y2)}>${key(x1,y1)}`;
     return edges.has(a) || edges.has(b);
+  }
+
+  // 궁 안에서 "인접 이동 가능 노드" (정/대각)
+  function palaceNeighbors(cx,cy){
+    const out=[];
+    const cand = [
+      [cx+1,cy],[cx-1,cy],[cx,cy+1],[cx,cy-1],
+      [cx+1,cy+1],[cx-1,cy+1],[cx+1,cy-1],[cx-1,cy-1]
+    ];
+    for(const [nx,ny] of cand){
+      if(!inside(nx,ny)) continue;
+
+      const sameCho = inPalace(SIDE.CHO,cx,cy) && inPalace(SIDE.CHO,nx,ny);
+      const sameHan = inPalace(SIDE.HAN,cx,cy) && inPalace(SIDE.HAN,nx,ny);
+      if(!sameCho && !sameHan) continue;
+
+      const manhattan = Math.abs(nx-cx)+Math.abs(ny-cy);
+      if(manhattan===1) out.push([nx,ny]);
+      else if(Math.abs(nx-cx)===1 && Math.abs(ny-cy)===1 && palaceDiagonalConnected(cx,cy,nx,ny)) out.push([nx,ny]);
+    }
+    return out;
+  }
+
+  // ✅ 궁 대각선 "레이(raycast)" 만들기: 시작점에서 (nx0,ny0) 방향으로 계속 같은 벡터 유지하며 전진
+  function palaceRayFrom(x,y,nx0,ny0){
+    const ray=[];
+    let px=x, py=y;
+    let cx=nx0, cy=ny0;
+    const vx = cx-px, vy = cy-py;
+
+    while(true){
+      ray.push([cx,cy]);
+
+      const nxt = palaceNeighbors(cx,cy).filter(([ax,ay]) => !(ax===px && ay===py));
+      const keep = nxt.find(([ax,ay]) => (ax-cx)===vx && (ay-cy)===vy);
+      if(!keep) break;
+
+      px=cx; py=cy;
+      cx=keep[0]; cy=keep[1];
+    }
+    return ray;
   }
 
   // -------------------------
@@ -984,55 +1035,74 @@
         }
       }
 
-      const neighbors = (cx,cy)=>{
-        const out=[];
-        const cand = [[cx+1,cy],[cx-1,cy],[cx,cy+1],[cx,cy-1],[cx+1,cy+1],[cx-1,cy+1],[cx+1,cy-1],[cx-1,cy-1]];
-        for(const [nx,ny] of cand){
-          if(!inside(nx,ny)) continue;
-          const samePal = (inPalace(SIDE.CHO,cx,cy)&&inPalace(SIDE.CHO,nx,ny)) || (inPalace(SIDE.HAN,cx,cy)&&inPalace(SIDE.HAN,nx,ny));
-          if(!samePal) continue;
-          const manhattan = Math.abs(nx-cx)+Math.abs(ny-cy);
-          if(manhattan===1) out.push([nx,ny]);
-          else if(Math.abs(nx-cx)===1 && Math.abs(ny-cy)===1 && palaceDiagonalConnected(cx,cy,nx,ny)) out.push([nx,ny]);
-        }
-        return out;
-      };
-
-      if(inPalace(SIDE.CHO,x,y) || inPalace(SIDE.HAN,x,y)){
-        const neigh = neighbors(x,y);
+      // 궁 대각선 "차" 이동
+      if(inAnyPalace(x,y)){
+        const neigh = palaceNeighbors(x,y);
         for(const [nx0,ny0] of neigh){
-          let nx=nx0, ny=ny0;
-          let px=x, py=y;
-          while(true){
-            const q = b[ny][nx];
-            if(!q) moves.push({fx:x,fy:y,tx:nx,ty:ny});
-            else { if(q.side!==side) moves.push({fx:x,fy:y,tx:nx,ty:ny}); break; }
-
-            const nxt = neighbors(nx,ny).filter(([ax,ay]) => !(ax===px && ay===py));
-            const vx=nx-px, vy=ny-py;
-            const keep = nxt.find(([ax,ay]) => (ax-nx)===vx && (ay-ny)===vy);
-            if(!keep) break;
-            px=nx; py=ny;
-            nx=keep[0]; ny=keep[1];
+          if(Math.abs(nx0-x)===1 && Math.abs(ny0-y)===1 && palaceDiagonalConnected(x,y,nx0,ny0)){
+            const ray = palaceRayFrom(x,y,nx0,ny0);
+            for(const [nx,ny] of ray){
+              const q = b[ny][nx];
+              if(!q) moves.push({fx:x,fy:y,tx:nx,ty:ny});
+              else { if(q.side!==side) moves.push({fx:x,fy:y,tx:nx,ty:ny}); break; }
+            }
           }
         }
       }
     }
     else if(t===TYPE.C){
+      // ✅ 포(炮): 직선 + (궁 안에서) 대각선도 가능, 스크린 1개 규칙 유지
+      function raycastLine(cells){
+        // cells: [ [nx,ny], [nx,ny], ... ] 순서대로
+        let seenScreen = false;
+        let screenIsCannon = false;
+
+        for(const [nx,ny] of cells){
+          const q = b[ny][nx];
+
+          if(!seenScreen){
+            if(!q){
+              // 스크린 전: 빈칸은 그냥 통과(이동 불가)
+              continue;
+            }
+            // 첫 말이 스크린
+            seenScreen = true;
+            screenIsCannon = (q.type===TYPE.C);
+            // 스크린이 포면 아예 이 방향은 불가
+            if(screenIsCannon) return;
+            continue;
+          }
+
+          // 스크린 이후
+          if(!q){
+            moves.push({fx:x,fy:y,tx:nx,ty:ny}); // 빈칸 이동 가능
+            continue;
+          }else{
+            // 말이 있으면 잡기 가능(상대 + 포 제외) 후 종료
+            if(q.side!==side && q.type!==TYPE.C) moves.push({fx:x,fy:y,tx:nx,ty:ny});
+            return;
+          }
+        }
+      }
+
+      // 1) 직선 레이
       const dirs = [[1,0],[-1,0],[0,1],[0,-1]];
       for(const [dx,dy] of dirs){
+        const cells=[];
         let nx=x+dx, ny=y+dy;
-        while(inside(nx,ny) && !b[ny][nx]){ nx+=dx; ny+=dy; }
-        if(!inside(nx,ny)) continue;
-        const screen = b[ny][nx];
-        if(!screen) continue;
-        if(screen.type===TYPE.C) continue;
-        nx+=dx; ny+=dy;
-        while(inside(nx,ny)){
-          const q = b[ny][nx];
-          if(!q) moves.push({fx:x,fy:y,tx:nx,ty:ny});
-          else { if(q.side!==side && q.type!==TYPE.C) moves.push({fx:x,fy:y,tx:nx,ty:ny}); break; }
-          nx+=dx; ny+=dy;
+        while(inside(nx,ny)){ cells.push([nx,ny]); nx+=dx; ny+=dy; }
+        raycastLine(cells);
+      }
+
+      // 2) ✅ 궁 안 대각선 레이(궁 대각선 위에서만)
+      if(inAnyPalace(x,y)){
+        const neigh = palaceNeighbors(x,y);
+        for(const [nx0,ny0] of neigh){
+          // 대각선으로 연결된 방향만 레이로 추가
+          if(Math.abs(nx0-x)===1 && Math.abs(ny0-y)===1 && palaceDiagonalConnected(x,y,nx0,ny0)){
+            const cells = palaceRayFrom(x,y,nx0,ny0);
+            raycastLine(cells);
+          }
         }
       }
     }
@@ -1149,7 +1219,7 @@
   }
 
   // -------------------------
-  // Check / Legal move filtering (✅ 외통수 판정 핵심)
+  // Check / Legal move filtering
   // -------------------------
   function findGeneral(b, side){
     for(let y=0;y<10;y++){
@@ -1169,7 +1239,6 @@
     return moves.some(m => m.tx===gpos.x && m.ty===gpos.y);
   }
 
-  /* ✅ 합법 수: "내 장이 안전한 수"만 허용 */
   function genAllLegalMoves(b, side){
     const pseudo = genAllMovesPseudo(b, side);
     const legal = [];
@@ -1192,8 +1261,6 @@
     return legal;
   }
 
-  // ✅ 체크메이트(외통수) 판정:
-  // sideToMove가 체크 상태 + 합법 수 0개 => 외통수
   function checkMateStatus(b, sideToMove){
     const legal = genAllLegalMoves(b, sideToMove);
     if(legal.length > 0) return { mate:false, stalemate:false, legalCount: legal.length };
@@ -1202,11 +1269,12 @@
   }
 
   // -------------------------
-  // Toast
+  // Toast (중앙 표시)
   // -------------------------
   let toastTimer = null;
-  function showToast(text){
-    UI.toastText.textContent = text;
+  function showToast(mainText, subText){
+    UI.toastText.textContent = mainText;
+    UI.toastSub.textContent = subText || "—";
     UI.toast.classList.remove('show');
     void UI.toast.offsetWidth;
     UI.toast.classList.add('show');
@@ -1216,14 +1284,15 @@
 
   function showJanggun(attackerSide){
     if(gameOver) return;
+    // ✅ 요청: "장군!"이 중앙에 크게
     const who = (attackerSide===SIDE.HAN) ? "漢(플레이어)" : "楚(AI)";
-    showToast(`${who} 장군!`);
+    showToast("장군!", who);
     playJanggun();
   }
 
   function showMate(winnerSide){
     const who = (winnerSide===SIDE.HAN) ? "漢(플레이어)" : "楚(AI)";
-    showToast(`${who} 외통수!`);
+    showToast("외통수!", who);
     playJanggun();
   }
 
@@ -1273,15 +1342,12 @@
       if(winner===SIDE.CHO) return  999999;
       if(winner===SIDE.HAN) return -999999;
 
-      // ✅ 외통수/스테일메이트 처리
       const sideToMove = maximizing ? SIDE.CHO : SIDE.HAN;
       const st = checkMateStatus(b, sideToMove);
       if(st.mate){
-        // sideToMove가 외통수 당함 => 직전 플레이어 승리
         return (sideToMove === SIDE.CHO) ? -999999 : 999999;
       }
       if(st.stalemate){
-        // 무승부는 중립 점수
         return 0;
       }
 
@@ -1330,7 +1396,7 @@
   }
 
   // -------------------------
-  // Piece Images (SVG) - 사진 느낌(빨강/파랑 + 깔끔한 돌)
+  // Piece Images (SVG)
   // -------------------------
   function getPieceImage(p){
     const key = `${p.side}_${p.type}`;
@@ -1339,8 +1405,8 @@
     const txt = pieceText(p);
     const isHan = p.side === SIDE.HAN;
 
-    const main = isHan ? getComputedStyle(document.documentElement).getPropertyValue('--blue').trim() : getComputedStyle(document.documentElement).getPropertyValue('--red').trim();
-    const main2 = isHan ? getComputedStyle(document.documentElement).getPropertyValue('--blue2').trim() : getComputedStyle(document.documentElement).getPropertyValue('--red2').trim();
+    const main = getComputedStyle(document.documentElement).getPropertyValue(isHan ? '--blue' : '--red').trim();
+    const main2 = getComputedStyle(document.documentElement).getPropertyValue(isHan ? '--blue2' : '--red2').trim();
 
     const fs = pieceFontSize(p.type);
     const y = (p.type === TYPE.G) ? 112 : 106;
@@ -1387,7 +1453,7 @@
     const txt = pieceText(p);
     const isHan = p.side === SIDE.HAN;
 
-    const main = isHan ? getComputedStyle(document.documentElement).getPropertyValue('--blue').trim() : getComputedStyle(document.documentElement).getPropertyValue('--red').trim();
+    const main = getComputedStyle(document.documentElement).getPropertyValue(isHan ? '--blue' : '--red').trim();
     const fs = chipFontSize(p.type);
     const y = (p.type === TYPE.G) ? 40 : 38;
 
@@ -1439,7 +1505,7 @@
   }
 
   // -------------------------
-  // Particles (폭죽 강화)
+  // Particles
   // -------------------------
   function spawnBurst(x,y,isWin,mega=false){
     const count = mega ? 160 : (isWin ? 120 : 75);
@@ -1484,7 +1550,7 @@
 
   function selectAt(x,y){
     selected = {x,y};
-    legalCache = genLegalMovesForPiece(board,x,y); // ✅ 합법 수만 표시
+    legalCache = genLegalMovesForPiece(board,x,y);
   }
 
   function doMove(mv){
@@ -1517,25 +1583,21 @@
       selected = null;
       legalCache = [];
 
-      // 1) 장 잡힘으로 즉시 종료
       if(winnerIfAny){
         appendLog(`${piece.side===SIDE.HAN?'漢':'楚'}: 상대 장을 잡았습니다!`);
         endGame(winnerIfAny, { reason:'capture' });
         return;
       }
 
-      // 2) 장군 체크 표시
       const defender = (piece.side===SIDE.HAN) ? SIDE.CHO : SIDE.HAN;
       if(isInCheck(board, defender)){
         showJanggun(piece.side);
         appendLog(`⚠️ 장군! (${piece.side===SIDE.HAN?'漢':'楚'} → ${defender===SIDE.HAN?'漢':'楚'})`);
       }
 
-      // 턴 변경
       turn = (turn===SIDE.HAN) ? SIDE.CHO : SIDE.HAN;
       syncUI();
 
-      // ✅ 3) 외통수(체크메이트) 즉시 종료 (턴 넘어간 쪽이 외통수 당했는지 체크)
       const st = checkMateStatus(board, turn);
       if(st.mate){
         const winner = (turn===SIDE.HAN) ? SIDE.CHO : SIDE.HAN;
@@ -1544,14 +1606,12 @@
         endGame(winner, { reason:'mate' });
         return;
       }
-      // 스테일메이트(움직일 수 없음 but 체크 아님) => 무승부 처리
       if(st.stalemate){
         appendLog(`🤝 더 이상 둘 수 있는 수가 없어 무승부!`);
         endGame(null, { reason:'draw' });
         return;
       }
 
-      // AI 턴이면 진행
       if(turn===SIDE.CHO){
         thinking = true;
         syncUI();
@@ -1564,7 +1624,6 @@
           if(gameOver) return;
 
           if(!aiMv){
-            // AI가 합법 수가 없으면: 체크면 외통수 / 아니면 무승부
             const st2 = checkMateStatus(board, SIDE.CHO);
             if(st2.mate){
               appendLog(`🏁 외통수! (漢 승리)`);
@@ -1589,12 +1648,10 @@
     thinking = false;
     gameOver = true;
 
-    // 승리 연출 on/off
     UI.fw.classList.remove('on');
     UI.flash.classList.remove('on');
 
     if(winner === null){
-      // Draw
       UI.statusTxt.textContent = "무승부";
       UI.resultTitle.textContent = "무승부";
       UI.resultBody.innerHTML = `더 이상 진행이 불가능합니다.<br/>다시 하려면 <b>다시 하기</b>를 누르세요.`;
@@ -1618,7 +1675,6 @@
       }
       playWin();
 
-      // ✅ 화려하게: 외통수면 mega 폭죽
       const mega = (meta?.reason === 'mate');
       UI.flash.classList.add('on');
       UI.fw.classList.add('on');
@@ -1639,7 +1695,7 @@
   }
 
   // -------------------------
-  // Rendering (사진 느낌: 판/격자/궁 대각선)
+  // Rendering
   // -------------------------
   function drawBoard(t){
     ctx.clearRect(0,0,cv.width,cv.height);
@@ -1647,14 +1703,12 @@
     const tl = xyToPx(0,0);
     const br = xyToPx(8,9);
 
-    // 외곽 프레임
     ctx.lineWidth = 5;
     ctx.strokeStyle = "rgba(81,54,31,.75)";
     ctx.beginPath();
     ctx.rect(tl.px, tl.py, br.px - tl.px, br.py - tl.py);
     ctx.stroke();
 
-    // 격자선
     ctx.lineWidth = 2;
     for(let x=0;x<9;x++){
       const a = xyToPx(x,0), b = xyToPx(x,9);
@@ -1667,7 +1721,6 @@
       ctx.beginPath(); ctx.moveTo(a.px,a.py); ctx.lineTo(b.px,b.py); ctx.stroke();
     }
 
-    // 궁 대각선
     ctx.lineWidth = 3;
     ctx.strokeStyle = "rgba(81,54,31,.62)";
     const lines = [
@@ -1679,7 +1732,6 @@
       ctx.beginPath(); ctx.moveTo(a.px,a.py); ctx.lineTo(b.px,b.py); ctx.stroke();
     }
 
-    // 선택/가능수 표시(점)
     if(selected){
       for(const m of legalCache){
         const c = xyToPx(m.tx,m.ty);
